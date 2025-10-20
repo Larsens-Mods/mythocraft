@@ -17,6 +17,9 @@
   "entrypoints": {
     "main": [
       "de.larsensmods.mythocraft.MythocraftMod"
+    ],
+    "client": [
+      "de.larsensmods.mythocraft.client.MythocraftModClient"
     ]
   },
   "mixins": [

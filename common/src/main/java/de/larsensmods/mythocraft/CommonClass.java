@@ -1,6 +1,7 @@
 package de.larsensmods.mythocraft;
 
-import de.larsensmods.mythocraft.items.MythItems;
+import de.larsensmods.mythocraft.entity.MythEntities;
+import de.larsensmods.mythocraft.item.MythItems;
 import de.larsensmods.mythocraft.platform.Services;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Items;
@@ -19,6 +20,7 @@ public class CommonClass {
             Constants.LOG.info("Hello to mythocraft");
         }
 
+        MythEntities.registerEntityTypes();
         MythItems.registerItems();
     }
 }

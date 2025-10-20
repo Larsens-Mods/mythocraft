@@ -1,3 +1,7 @@
 {
-  "item.mythocraft.ambrosia": "Ambrosia"
+  "item.mythocraft.ambrosia": "Ambrosia",
+
+  "item.mythocraft.satyr_spawn_egg": "Satyr Spawn Egg",
+
+  "entity.mythocraft.satyr": "Satyr"
 }
