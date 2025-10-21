@@ -4,7 +4,6 @@ import de.larsensmods.mythocraft.Constants;
 import de.larsensmods.mythocraft.entity.MythEntities;
 import de.larsensmods.mythocraft.entity.client.SatyrModel;
 import de.larsensmods.mythocraft.entity.friendly.SatyrEntity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -18,9 +17,8 @@ public class ModEventBusEvents {
         event.registerLayerDefinition(SatyrModel.LAYER_LOCATION, SatyrModel::createBodyLayer);
     }
 
-    @SuppressWarnings("unchecked")
     @SubscribeEvent
     public static void registerAttributes(EntityAttributeCreationEvent event) {
-        event.put((EntityType<SatyrEntity>) MythEntities.SATYR.get(), SatyrEntity.createAttributes().build());
+        event.put(MythEntities.SATYR.get(), SatyrEntity.createAttributes().build());
     }
 }

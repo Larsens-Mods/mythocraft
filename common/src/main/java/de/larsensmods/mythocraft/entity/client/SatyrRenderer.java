@@ -23,9 +23,9 @@ public class SatyrRenderer extends MobRenderer<SatyrEntity, SatyrModel<SatyrEnti
     @Override
     public void render(@NotNull SatyrEntity pEntity, float pEntityYaw, float pPartialTicks, @NotNull PoseStack pPoseStack, @NotNull MultiBufferSource pBuffer, int pPackedLight) {
         if(pEntity.isBaby()){
-            pPoseStack.scale(0.65f, 0.65f, 0.65f);
+            pPoseStack.scale(0.6f, 0.6f, 0.6f);
         }else{
-            pPoseStack.scale(1.0f, 1.0f, 1.0f);
+            pPoseStack.scale(0.9f, 0.9f, 0.9f);
         }
 
         super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);

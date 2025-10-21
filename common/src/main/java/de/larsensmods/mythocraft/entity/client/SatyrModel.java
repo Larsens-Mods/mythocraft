@@ -53,18 +53,20 @@ public class SatyrModel<T extends SatyrEntity> extends HierarchicalModel<T> {
         PartDefinition LeftArm = body.addOrReplaceChild("LeftArm", CubeListBuilder.create().texOffs(36, 16).addBox(2.0F, -1.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(2.0F, -27.0F, 0.0F));
 
         PartDefinition RightLeg = body.addOrReplaceChild("RightLeg", CubeListBuilder.create().texOffs(20, 32).addBox(-2.0F, 1.0F, -2.0F, 4.0F, 5.0F, 4.0F, new CubeDeformation(0.0F))
-                .texOffs(24, 49).addBox(-1.0F, 14.0F, -1.0F, 2.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(-2.0F, -17.0F, 0.0F));
+                .texOffs(24, 49).addBox(-1.5F, 14.0F, -1.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(22, 53).addBox(-2.0F, 15.0F, -1.5F, 3.0F, 2.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(-2.0F, -17.0F, 0.0F));
 
-        PartDefinition SlantFrontRight_r1 = RightLeg.addOrReplaceChild("SlantFrontRight_r1", CubeListBuilder.create().texOffs(28, 41).addBox(-5.0F, -5.5F, -1.0F, 2.0F, 6.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.0F, 14.0F, 0.0F, -0.6109F, 0.0F, 0.0F));
+        PartDefinition SlantFrontRight_r1 = RightLeg.addOrReplaceChild("SlantFrontRight_r1", CubeListBuilder.create().texOffs(28, 41).addBox(-5.5F, -5.5F, -1.0F, 2.0F, 6.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.0F, 14.0F, 0.0F, -0.6109F, 0.0F, 0.0F));
 
-        PartDefinition SlantBackRight_r1 = RightLeg.addOrReplaceChild("SlantBackRight_r1", CubeListBuilder.create().texOffs(20, 41).addBox(-5.0F, -5.5F, -1.0F, 2.0F, 6.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.0F, 10.0F, 3.0F, 0.5672F, 0.0F, 0.0F));
+        PartDefinition SlantBackRight_r1 = RightLeg.addOrReplaceChild("SlantBackRight_r1", CubeListBuilder.create().texOffs(18, 41).addBox(-6.0F, -5.5F, -1.0F, 3.0F, 6.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.0F, 10.0F, 3.0F, 0.5672F, 0.0F, 0.0F));
 
         PartDefinition LeftLeg = body.addOrReplaceChild("LeftLeg", CubeListBuilder.create().texOffs(36, 32).addBox(-2.0F, 1.0F, -2.0F, 4.0F, 5.0F, 4.0F, new CubeDeformation(0.0F))
-                .texOffs(40, 49).addBox(-1.0F, 14.0F, -1.0F, 2.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(2.0F, -17.0F, 0.0F));
+                .texOffs(40, 49).addBox(-0.5F, 14.0F, -1.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(38, 53).addBox(-1.0F, 15.0F, -1.5F, 3.0F, 2.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(2.0F, -17.0F, 0.0F));
 
-        PartDefinition SlantFrontLeft_r1 = LeftLeg.addOrReplaceChild("SlantFrontLeft_r1", CubeListBuilder.create().texOffs(36, 41).addBox(-1.0F, -5.5F, -1.0F, 2.0F, 6.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 14.0F, 0.0F, -0.6109F, 0.0F, 0.0F));
+        PartDefinition SlantFrontLeft_r1 = LeftLeg.addOrReplaceChild("SlantFrontLeft_r1", CubeListBuilder.create().texOffs(36, 41).addBox(-0.5F, -5.5F, -1.0F, 2.0F, 6.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 14.0F, 0.0F, -0.6109F, 0.0F, 0.0F));
 
-        PartDefinition SlantBackLeft_r1 = LeftLeg.addOrReplaceChild("SlantBackLeft_r1", CubeListBuilder.create().texOffs(44, 41).addBox(-1.0F, -5.5F, -1.0F, 2.0F, 6.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.0F, 3.0F, 0.5672F, 0.0F, 0.0F));
+        PartDefinition SlantBackLeft_r1 = LeftLeg.addOrReplaceChild("SlantBackLeft_r1", CubeListBuilder.create().texOffs(44, 41).addBox(-1.0F, -5.5F, -1.0F, 3.0F, 6.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 10.0F, 3.0F, 0.5672F, 0.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 64, 64);
     }

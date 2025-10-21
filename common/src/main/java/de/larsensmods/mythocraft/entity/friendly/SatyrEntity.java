@@ -34,7 +34,7 @@ public class SatyrEntity extends AgeableMob {
 
     @Override
     public @Nullable AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return (AgeableMob) MythEntities.SATYR.get().create(serverLevel);
+        return MythEntities.SATYR.get().create(serverLevel);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class SatyrEntity extends AgeableMob {
     public static AttributeSupplier.Builder createAttributes() {
         return LivingEntity.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.5)
+                .add(Attributes.MOVEMENT_SPEED, 0.2)
                 .add(Attributes.FOLLOW_RANGE, 16.0);
     }
 }
