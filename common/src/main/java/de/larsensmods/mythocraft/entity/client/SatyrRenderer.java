@@ -1,15 +1,26 @@
 package de.larsensmods.mythocraft.entity.client;
 
+import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.larsensmods.mythocraft.Constants;
 import de.larsensmods.mythocraft.entity.friendly.SatyrEntity;
+import de.larsensmods.mythocraft.entity.friendly.SatyrVariant;
+import net.minecraft.Util;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 public class SatyrRenderer extends MobRenderer<SatyrEntity, SatyrModel<SatyrEntity>> {
+
+    private static final Map<SatyrVariant, ResourceLocation> TEXTURE_MAP = Util.make(Maps.newEnumMap(SatyrVariant.class), map -> {
+        map.put(SatyrVariant.VARIANT_0, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/satyr/satyr1.png"));
+        map.put(SatyrVariant.VARIANT_1, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/satyr/satyr2.png"));
+    });
+    private static final ResourceLocation DEFAULT_TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/satyr/satyr1.png");
 
     public SatyrRenderer(EntityRendererProvider.Context pContext) {
         super(pContext, new SatyrModel<>(pContext.bakeLayer(SatyrModel.LAYER_LOCATION)), 0.3f);
@@ -17,7 +28,7 @@ public class SatyrRenderer extends MobRenderer<SatyrEntity, SatyrModel<SatyrEnti
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull SatyrEntity satyrEntity) {
-        return ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/satyr/satyr1.png");
+        return TEXTURE_MAP.getOrDefault(satyrEntity.getVariant(), DEFAULT_TEXTURE);
     }
 
     @Override
