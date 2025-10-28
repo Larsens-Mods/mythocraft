@@ -20,6 +20,9 @@
     ],
     "client": [
       "de.larsensmods.mythocraft.client.MythocraftModClient"
+    ],
+    "fabric-datagen": [
+      "de.larsensmods.mythocraft.data.MythocraftDataGenerator"
     ]
   },
   "mixins": [

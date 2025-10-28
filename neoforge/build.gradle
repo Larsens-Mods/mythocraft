@@ -37,3 +37,9 @@ neoForge {
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+tasks.register('copyDatagenFiles', Copy){
+    from("runs/data/generated")
+    into("src/generated/resources")
+    include("assets/**", "data/**")
+}
