@@ -2,6 +2,7 @@ package de.larsensmods.mythocraft;
 
 import de.larsensmods.mythocraft.entity.MythEntities;
 import de.larsensmods.mythocraft.entity.friendly.SatyrEntity;
+import de.larsensmods.mythocraft.world.generation.MythocraftEntitySpawns;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.world.entity.SpawnPlacementTypes;
@@ -18,6 +19,8 @@ public class MythocraftMod implements ModInitializer {
 
         this.createEntityAttributes();
         this.registerSpawnPlacements();
+
+        MythocraftEntitySpawns.addSpawns();
     }
 
     private void createEntityAttributes(){
