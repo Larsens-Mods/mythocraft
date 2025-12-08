@@ -36,6 +36,10 @@ neoForge {
     }
 }
 
+dependencies{
+    compileOnly('de.larsensmods:lmcc-neoforge-1.21:1.0-SNAPSHOT')
+}
+
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 tasks.register('copyDatagenFiles', Copy){
