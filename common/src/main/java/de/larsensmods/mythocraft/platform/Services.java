@@ -2,7 +2,6 @@ package de.larsensmods.mythocraft.platform;
 
 import de.larsensmods.mythocraft.Constants;
 import de.larsensmods.mythocraft.platform.services.IPlatformHelper;
-import de.larsensmods.mythocraft.platform.services.IRegistryHelper;
 
 import java.util.ServiceLoader;
 
@@ -13,9 +12,6 @@ public class Services {
 
     //Platform helper
     public static final IPlatformHelper PLATFORM = load(IPlatformHelper.class);
-
-    //Registry helper
-    public static final IRegistryHelper REGISTRY = load(IRegistryHelper.class);
 
     /**
      * Loads a service using the ServiceLoader mechanism.

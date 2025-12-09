@@ -1,6 +1,5 @@
 package de.larsensmods.mythocraft;
 
-import de.larsensmods.mythocraft.platform.NeoForgeRegistryHelper;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 
@@ -10,7 +9,5 @@ public class MythocraftMod {
     public MythocraftMod(IEventBus eventBus) {
         Constants.LOG.info("Hello NeoForge world!");
         CommonClass.init();
-
-        NeoForgeRegistryHelper.finishRegistration(eventBus);
     }
 }
