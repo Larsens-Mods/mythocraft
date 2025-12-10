@@ -3,8 +3,10 @@
   "item.mythocraft.nemean_lion_pelt": "Pelt of the Nemean Lion",
 
   "item.mythocraft.satyr_spawn_egg": "Satyr Spawn Egg",
+  "item.mythocraft.nemean_lion_spawn_egg": "Nemean Lion Spawn Egg",
 
   "entity.mythocraft.satyr": "Satyr",
+  "entity.mythocraft.nemean_lion": "Nemean Lion",
 
   "itemGroup.mythocraft.myth_items": "Mythocraft Items"
 }

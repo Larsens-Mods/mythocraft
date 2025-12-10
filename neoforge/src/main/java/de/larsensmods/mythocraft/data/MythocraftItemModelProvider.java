@@ -21,6 +21,7 @@ public class MythocraftItemModelProvider extends ItemModelProvider {
         basicItem(MythItems.NEMEAN_LION_PELT.get());
 
         withExistingParent(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(MythItems.SATYR_SPAWN_EGG.get())).getPath(), mcLoc("item/template_spawn_egg"));
+        withExistingParent(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(MythItems.NEMEAN_LION_SPAWN_EGG.get())).getPath(), mcLoc("item/template_spawn_egg"));
     }
 
 }

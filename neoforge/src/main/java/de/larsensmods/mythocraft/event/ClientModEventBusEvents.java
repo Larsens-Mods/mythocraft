@@ -2,6 +2,7 @@ package de.larsensmods.mythocraft.event;
 
 import de.larsensmods.mythocraft.Constants;
 import de.larsensmods.mythocraft.entity.MythEntities;
+import de.larsensmods.mythocraft.entity.client.NemeanLionRenderer;
 import de.larsensmods.mythocraft.entity.client.SatyrRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.neoforged.api.distmarker.Dist;
@@ -15,6 +16,7 @@ public class ClientModEventBusEvents {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         EntityRenderers.register(MythEntities.SATYR.get(), SatyrRenderer::new);
+        EntityRenderers.register(MythEntities.NEMEAN_LION.get(), NemeanLionRenderer::new);
     }
 
 }

@@ -2,6 +2,7 @@ package de.larsensmods.mythocraft;
 
 import de.larsensmods.mythocraft.entity.MythEntities;
 import de.larsensmods.mythocraft.entity.friendly.SatyrEntity;
+import de.larsensmods.mythocraft.entity.monster.NemeanLionEntity;
 import de.larsensmods.mythocraft.world.generation.MythocraftEntitySpawns;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -25,6 +26,7 @@ public class MythocraftMod implements ModInitializer {
 
     private void createEntityAttributes(){
         FabricDefaultAttributeRegistry.register(MythEntities.SATYR.get(), SatyrEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(MythEntities.NEMEAN_LION.get(), NemeanLionEntity.createAttributes().build());
     }
 
     private void registerSpawnPlacements(){
