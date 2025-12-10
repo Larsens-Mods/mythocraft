@@ -4,5 +4,7 @@
 
   "item.mythocraft.satyr_spawn_egg": "Satyr Spawn Egg",
 
-  "entity.mythocraft.satyr": "Satyr"
+  "entity.mythocraft.satyr": "Satyr",
+
+  "itemGroup.mythocraft.myth_items": "Mythocraft Items"
 }

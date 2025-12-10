@@ -1,6 +1,7 @@
 package de.larsensmods.mythocraft;
 
 import de.larsensmods.mythocraft.entity.MythEntities;
+import de.larsensmods.mythocraft.item.MythCreativeTabs;
 import de.larsensmods.mythocraft.item.MythItems;
 import de.larsensmods.mythocraft.platform.Services;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -22,5 +23,6 @@ public class CommonClass {
 
         MythEntities.registerEntityTypes();
         MythItems.registerItems();
+        MythCreativeTabs.registerCreativeTabs();
     }
 }
