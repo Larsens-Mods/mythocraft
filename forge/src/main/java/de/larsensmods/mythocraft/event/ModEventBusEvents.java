@@ -5,11 +5,9 @@ import de.larsensmods.mythocraft.entity.MythEntities;
 import de.larsensmods.mythocraft.entity.client.NemeanLionModel;
 import de.larsensmods.mythocraft.entity.client.SatyrModel;
 import de.larsensmods.mythocraft.entity.friendly.SatyrEntity;
-import de.larsensmods.mythocraft.entity.monster.NemeanLionEntity;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -21,12 +19,6 @@ public class ModEventBusEvents {
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(SatyrModel.LAYER_LOCATION, SatyrModel::createBodyLayer);
         event.registerLayerDefinition(NemeanLionModel.LAYER_LOCATION, NemeanLionModel::createBodyLayer);
-    }
-
-    @SubscribeEvent
-    public static void registerAttributes(EntityAttributeCreationEvent event) {
-        event.put(MythEntities.SATYR.get(), SatyrEntity.createAttributes().build());
-        event.put(MythEntities.NEMEAN_LION.get(), NemeanLionEntity.createAttributes().build());
     }
 
     @SubscribeEvent

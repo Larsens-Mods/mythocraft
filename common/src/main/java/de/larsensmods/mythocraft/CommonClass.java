@@ -1,6 +1,9 @@
 package de.larsensmods.mythocraft;
 
+import de.larsensmods.lmcc.api.entity.AttributeRegistry;
 import de.larsensmods.mythocraft.entity.MythEntities;
+import de.larsensmods.mythocraft.entity.friendly.SatyrEntity;
+import de.larsensmods.mythocraft.entity.monster.NemeanLionEntity;
 import de.larsensmods.mythocraft.item.MythCreativeTabs;
 import de.larsensmods.mythocraft.item.MythItems;
 import de.larsensmods.mythocraft.platform.Services;
@@ -24,5 +27,12 @@ public class CommonClass {
         MythEntities.registerEntityTypes();
         MythItems.registerItems();
         MythCreativeTabs.registerCreativeTabs();
+
+        createEntityAttributes();
+    }
+
+    private static void createEntityAttributes(){
+        AttributeRegistry.register(MythEntities.SATYR, () -> SatyrEntity.createAttributes().build());
+        AttributeRegistry.register(MythEntities.NEMEAN_LION, () -> NemeanLionEntity.createAttributes().build());
     }
 }
