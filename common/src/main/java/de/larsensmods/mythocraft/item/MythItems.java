@@ -14,11 +14,13 @@ public class MythItems {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, Constants.MOD_ID);
 
     public static Supplier<Item> AMBROSIA;
+    public static Supplier<Item> NEMEAN_LION_PELT;
 
     public static Supplier<Item> SATYR_SPAWN_EGG;
 
     public static void registerItems(){
         AMBROSIA = ITEMS.register("ambrosia", () -> new Item(new Item.Properties()));
+        NEMEAN_LION_PELT = ITEMS.register("nemean_lion_pelt", () -> new Item(new Item.Properties()));
 
         SATYR_SPAWN_EGG = ITEMS.register("satyr_spawn_egg", () -> new WrappedSpawnEggItem(MythEntities.SATYR, 0x978F88, 0xF7D1AB, new Item.Properties()));
 

@@ -25,6 +25,7 @@ public class MythocraftModelProvider extends FabricModelProvider {
     @Override
     public void generateItemModels(ItemModelGenerators itemModelGenerator) {
         itemModelGenerator.generateFlatItem(MythItems.AMBROSIA.get(), ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(MythItems.NEMEAN_LION_PELT.get(), ModelTemplates.FLAT_ITEM);
 
         itemModelGenerator.generateFlatItem(MythItems.SATYR_SPAWN_EGG.get(), new ModelTemplate(Optional.of(ResourceLocation.withDefaultNamespace("item/template_spawn_egg")), Optional.empty()));
     }
