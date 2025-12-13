@@ -9,6 +9,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 
+import java.util.Set;
+
 public class MythEntities {
 
     private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE, Constants.MOD_ID);
@@ -21,6 +23,13 @@ public class MythEntities {
         NEMEAN_LION = ENTITY_TYPES.register("nemean_lion", () -> EntityType.Builder.of(NemeanLionEntity::new, MobCategory.MONSTER).sized(1.2f, 1.5f).build("nemean_lion"));
 
         ENTITY_TYPES.register();
+    }
+
+    public static Set<DeferredSupplier<? extends EntityType<?>>> getEntityTypes(){
+        return Set.of(
+                SATYR,
+                NEMEAN_LION
+        );
     }
 
 }

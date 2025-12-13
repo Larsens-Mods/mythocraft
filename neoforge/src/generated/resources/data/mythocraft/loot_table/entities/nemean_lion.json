@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:entity",
+  "functions": [
+    {
+      "add": false,
+      "count": {
+        "type": "minecraft:uniform",
+        "max": 1.0,
+        "min": 0.0
+      },
+      "function": "minecraft:set_count"
+    }
+  ],
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "mythocraft:nemean_lion_pelt"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

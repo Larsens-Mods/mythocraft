@@ -1,5 +1,6 @@
 package de.larsensmods.mythocraft.entity.monster;
 
+import de.larsensmods.mythocraft.item.MythItems;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -8,6 +9,12 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
 public class NemeanLionEntity extends Monster {
 
@@ -52,5 +59,15 @@ public class NemeanLionEntity extends Monster {
                 .add(Attributes.KNOCKBACK_RESISTANCE, 3.0)
                 .add(Attributes.ARMOR_TOUGHNESS, 3.0)
                 .add(Attributes.FOLLOW_RANGE, 16.0);
+    }
+
+    public static LootTable.Builder getLootTableBuilder(){
+        return LootTable.lootTable()
+                .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 1)))
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1))
+                        .setBonusRolls(ConstantValue.exactly(0))
+                        .add(LootItem.lootTableItem(MythItems.NEMEAN_LION_PELT.get()))
+                );
     }
 }
