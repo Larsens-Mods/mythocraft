@@ -30,6 +30,9 @@ public class MythocraftDataGenerator {
 
         //LootTables
         generator.addProvider(event.includeServer(), new MythocraftLootTableProvider(packOutput, lookupProvider));
+
+        //Crafting
+        generator.addProvider(event.includeServer(), new MythocraftRecipeProvider(packOutput, lookupProvider));
     }
 
 }

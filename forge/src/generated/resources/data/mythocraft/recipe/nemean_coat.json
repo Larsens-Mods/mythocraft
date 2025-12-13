@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "N": {
+      "item": "mythocraft:nemean_lion_pelt"
+    },
+    "S": {
+      "item": "minecraft:string"
+    }
+  },
+  "pattern": [
+    "N N",
+    "NSN",
+    "NSN"
+  ],
+  "result": {
+    "count": 1,
+    "id": "mythocraft:nemean_coat"
+  }
+}

@@ -12,5 +12,6 @@ public class MythocraftDataGenerator implements DataGeneratorEntrypoint {
 
         pack.addProvider(MythocraftModelProvider::new);
         pack.addProvider(MythocraftEntityLootProvider::new);
+        pack.addProvider(MythocraftRecipeProvider::new);
     }
 }
