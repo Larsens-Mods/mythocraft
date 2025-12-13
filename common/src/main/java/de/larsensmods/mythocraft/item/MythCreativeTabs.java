@@ -23,6 +23,8 @@ public class MythCreativeTabs {
                     output.accept(MythItems.AMBROSIA.get());
                     output.accept(MythItems.NEMEAN_LION_PELT.get());
 
+                    output.accept(MythItems.NEMEAN_COAT.get());
+
                     output.accept(MythItems.SATYR_SPAWN_EGG.get());
                     output.accept(MythItems.NEMEAN_LION_SPAWN_EGG.get());
                 })

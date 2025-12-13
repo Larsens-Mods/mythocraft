@@ -5,6 +5,7 @@ import de.larsensmods.lmcc.api.entity.SpawnPlacementsRegistry;
 import de.larsensmods.mythocraft.entity.MythEntities;
 import de.larsensmods.mythocraft.entity.friendly.SatyrEntity;
 import de.larsensmods.mythocraft.entity.monster.NemeanLionEntity;
+import de.larsensmods.mythocraft.item.MythArmorMaterials;
 import de.larsensmods.mythocraft.item.MythCreativeTabs;
 import de.larsensmods.mythocraft.item.MythItems;
 import de.larsensmods.mythocraft.platform.Services;
@@ -28,6 +29,7 @@ public class CommonClass {
         }
 
         MythEntities.registerEntityTypes();
+        MythArmorMaterials.registerArmorMaterials();
         MythItems.registerItems();
         MythCreativeTabs.registerCreativeTabs();
 
