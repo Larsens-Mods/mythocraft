@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.EnumMap;
@@ -19,6 +20,7 @@ public class MythArmorMaterials {
     private static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, Constants.MOD_ID);
 
     public static DeferredSupplier<ArmorMaterial> NEMEAN;
+    public static DeferredSupplier<ArmorMaterial> HADES;
 
     public static void registerArmorMaterials(){
         NEMEAN = ARMOR_MATERIALS.register("nemean", () -> new ArmorMaterial(
@@ -37,6 +39,23 @@ public class MythArmorMaterials {
                 ),
                 4.0f,
                 0.1f
+        ));
+        HADES = ARMOR_MATERIALS.register("hades", () -> new ArmorMaterial(
+                Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                    map.put(ArmorItem.Type.BOOTS, 2);
+                    map.put(ArmorItem.Type.LEGGINGS, 5);
+                    map.put(ArmorItem.Type.CHESTPLATE, 6);
+                    map.put(ArmorItem.Type.HELMET, 3);
+                    map.put(ArmorItem.Type.BODY, 5);
+                }),
+                25,
+                SoundEvents.ARMOR_EQUIP_IRON,
+                () -> Ingredient.of(Items.IRON_BLOCK),
+                List.of(
+                        new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "hades"))
+                ),
+                3f,
+                0f
         ));
 
         ARMOR_MATERIALS.register();
