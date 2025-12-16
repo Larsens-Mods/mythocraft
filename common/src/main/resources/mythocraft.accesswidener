@@ -1,0 +1,9 @@
+accessWidener v2 named
+
+accessible field net/minecraft/client/renderer/entity/layers/HumanoidArmorLayer armorTrimAtlas Lnet/minecraft/client/renderer/texture/TextureAtlas;
+accessible field net/minecraft/client/model/PlayerModel cloak Lnet/minecraft/client/model/geom/ModelPart;
+
+accessible class net/minecraft/client/renderer/RenderType$CompositeState
+accessible class net/minecraft/client/renderer/RenderType$CompositeRenderType
+accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
+accessible class net/minecraft/client/renderer/RenderStateShard$EmptyTextureStateShard
