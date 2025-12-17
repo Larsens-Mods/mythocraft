@@ -33,6 +33,9 @@ public class MythocraftDataGenerator {
 
         //Crafting
         generator.addProvider(event.includeServer(), new MythocraftRecipeProvider(packOutput, lookupProvider));
+
+        //Tags
+        generator.addProvider(event.includeServer(), new MythocraftBiomeTagProvider(packOutput, lookupProvider));
     }
 
 }

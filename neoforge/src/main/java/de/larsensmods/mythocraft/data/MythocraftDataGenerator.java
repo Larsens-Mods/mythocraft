@@ -29,10 +29,13 @@ public class MythocraftDataGenerator {
         generator.addProvider(true /*event.includeServer()*/, new MythocraftDatapackEntries(packOutput, lookupProvider));
 
         //LootTables
-        generator.addProvider(event.includeServer(), new MythocraftLootTableProvider(packOutput, lookupProvider));
+        generator.addProvider(true /*event.includeServer()*/, new MythocraftLootTableProvider(packOutput, lookupProvider));
 
         //Crafting
-        generator.addProvider(event.includeServer(), new MythocraftRecipeProvider(packOutput, lookupProvider));
+        generator.addProvider(true /*event.includeServer()*/, new MythocraftRecipeProvider(packOutput, lookupProvider));
+
+        //Tags
+        generator.addProvider(true /*event.includeServer()*/, new MythocraftBiomeTagProvider(packOutput, lookupProvider));
     }
 
 }

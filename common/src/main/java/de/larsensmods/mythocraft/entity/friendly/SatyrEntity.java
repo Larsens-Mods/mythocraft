@@ -1,6 +1,7 @@
 package de.larsensmods.mythocraft.entity.friendly;
 
 import de.larsensmods.mythocraft.entity.MythEntities;
+import de.larsensmods.mythocraft.item.MythItems;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -19,6 +20,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -115,5 +122,9 @@ public class SatyrEntity extends AgeableMob {
     public static boolean checkSatyrSpawnRules(EntityType<? extends SatyrEntity> pSatyr, LevelAccessor pLevel, MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
         boolean flag = MobSpawnType.ignoresLightRequirements(pSpawnType) || pLevel.getRawBrightness(pPos, 0) > 8;
         return pLevel.getBlockState(pPos.below()).is(BlockTags.ANIMALS_SPAWNABLE_ON) && flag;
+    }
+
+    public static LootTable.Builder getLootTableBuilder(){
+        return LootTable.lootTable();
     }
 }

@@ -10,5 +10,6 @@ public class MythocraftLootTables {
 
     //ENTITIES
     public static ResourceKey<LootTable> NEMEAN_LION_LOOT = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "entities/nemean_lion"));
+    public static ResourceKey<LootTable> SATYR_LOOT = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "entities/satyr"));
 
 }

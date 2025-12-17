@@ -11,7 +11,11 @@ public class MythocraftDataGenerator implements DataGeneratorEntrypoint {
         FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
 
         pack.addProvider(MythocraftModelProvider::new);
+
         pack.addProvider(MythocraftEntityLootProvider::new);
+
         pack.addProvider(MythocraftRecipeProvider::new);
+
+        pack.addProvider(MythocraftBiomeTagProvider::new);
     }
 }
