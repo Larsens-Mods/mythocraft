@@ -94,8 +94,8 @@ public class NemeanLionModel<T extends NemeanLionEntity> extends HierarchicalMod
         this.root().getAllParts().forEach(ModelPart::resetPose);
         this.applyHeadRotation(netHeadYaw, headPitch);
 
-        this.animateWalk(SatyrAnimations.ANIM_SATYR_WALK, limbSwing, limbSwingAmount, 2f, 2.5f);
-        this.animate(entity.idleAnimationState, SatyrAnimations.ANIM_SATYR_IDLE, ageInTicks, 1f);
+        this.animateWalk(NemeanLionAnimations.WALK, limbSwing, limbSwingAmount, 2f, 2.5f);
+        this.animate(entity.idleAnimationState, NemeanLionAnimations.IDLE, ageInTicks, 1f);
     }
 
     private void applyHeadRotation(float headYaw, float headPitch) {
