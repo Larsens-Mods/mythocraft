@@ -5,6 +5,9 @@ import de.larsensmods.lmcc.api.wrappers.item.WrappedSpawnEggItem;
 import de.larsensmods.mythocraft.Constants;
 import de.larsensmods.mythocraft.entity.MythEntities;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 
@@ -24,7 +27,7 @@ public class MythItems {
     public static Supplier<Item> NEMEAN_LION_SPAWN_EGG;
 
     public static void registerItems(){
-        AMBROSIA = ITEMS.register("ambrosia", () -> new Item(new Item.Properties()));
+        AMBROSIA = ITEMS.register("ambrosia", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(20).saturationModifier(0.5f).alwaysEdible().effect(new MobEffectInstance(MobEffects.REGENERATION, 200, 2), 1f).build())));
         NEMEAN_LION_PELT = ITEMS.register("nemean_lion_pelt", () -> new Item(new Item.Properties()));
 
         NEMEAN_COAT = ITEMS.register("nemean_coat", () -> new ArmorItem(MythArmorMaterials.NEMEAN, ArmorItem.Type.CHESTPLATE, new Item.Properties().durability(500)));
