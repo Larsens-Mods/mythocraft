@@ -18,7 +18,7 @@ public class MythStructureSets {
         structureSetBootstrapContext.register(MythocraftStructureSets.GREEK_TEMPLE, new StructureSet(
                 structureHolderGetter.getOrThrow(MythocraftStructures.GREEK_TEMPLE),
                 new RandomSpreadStructurePlacement(
-                        20, 4, RandomSpreadType.LINEAR, 0
+                        32, 12, RandomSpreadType.LINEAR, 83476973
                 )
         ));
     }
