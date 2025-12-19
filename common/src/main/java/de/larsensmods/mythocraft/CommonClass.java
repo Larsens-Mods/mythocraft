@@ -44,5 +44,6 @@ public class CommonClass {
 
     private static void registerSpawnPlacements(){
         SpawnPlacementsRegistry.register(MythEntities.SATYR, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SatyrEntity::checkSatyrSpawnRules);
+        SpawnPlacementsRegistry.register(MythEntities.NEMEAN_LION, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NemeanLionEntity::checkAnyLightMonsterSpawnRules);
     }
 }

@@ -76,7 +76,7 @@ dependencies {
     // Forge's hack fix
     implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
 
-    compileOnly('de.larsensmods:lmcc-forge-1.21:1.0-SNAPSHOT')
+    compileOnly('de.larsensmods:lmcc-forge-1.21:1.0')
 }
 
 publishing {
@@ -84,6 +84,20 @@ publishing {
         mavenJava(MavenPublication) {
             fg.component(it)
         }
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                'MixinConfigs': "${mod_id}.mixins.json, ${mod_id}.forge.mixins.json"
+        ])
+    }
+}
+
+sourceSets {
+    main {
+        ext.refMap = "${mod_id}.refmap.json"
     }
 }
 

@@ -22,7 +22,7 @@ dependencies {
     compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
     annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
 
-    compileOnly group: 'de.larsensmods', name: 'lmcc-common-1.21', version: '1.0-SNAPSHOT'
+    compileOnly group: 'de.larsensmods', name: 'lmcc-common-1.21', version: '1.0'
 }
 
 configurations {

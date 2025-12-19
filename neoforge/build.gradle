@@ -37,7 +37,7 @@ neoForge {
 }
 
 dependencies{
-    compileOnly('de.larsensmods:lmcc-neoforge-1.21:1.0-SNAPSHOT')
+    compileOnly('de.larsensmods:lmcc-neoforge-1.21:1.0')
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
