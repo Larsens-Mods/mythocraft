@@ -3,6 +3,7 @@ package de.larsensmods.mythocraft;
 import de.larsensmods.lmcc.api.entity.AttributeRegistry;
 import de.larsensmods.lmcc.api.entity.SpawnPlacementsRegistry;
 import de.larsensmods.mythocraft.entity.MythEntities;
+import de.larsensmods.mythocraft.entity.friendly.PegasusEntity;
 import de.larsensmods.mythocraft.entity.friendly.SatyrEntity;
 import de.larsensmods.mythocraft.entity.monster.NemeanLionEntity;
 import de.larsensmods.mythocraft.item.MythArmorMaterials;
@@ -39,11 +40,13 @@ public class CommonClass {
 
     private static void createEntityAttributes(){
         AttributeRegistry.register(MythEntities.SATYR, () -> SatyrEntity.createAttributes().build());
+        AttributeRegistry.register(MythEntities.PEGASUS, () -> PegasusEntity.createAttributes().build());
         AttributeRegistry.register(MythEntities.NEMEAN_LION, () -> NemeanLionEntity.createAttributes().build());
     }
 
     private static void registerSpawnPlacements(){
         SpawnPlacementsRegistry.register(MythEntities.SATYR, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SatyrEntity::checkSatyrSpawnRules);
+        SpawnPlacementsRegistry.register(MythEntities.PEGASUS, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, PegasusEntity::checkPegasusSpawnRules);
         SpawnPlacementsRegistry.register(MythEntities.NEMEAN_LION, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NemeanLionEntity::checkAnyLightMonsterSpawnRules);
     }
 }

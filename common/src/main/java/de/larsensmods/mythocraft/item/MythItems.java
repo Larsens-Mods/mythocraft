@@ -24,6 +24,7 @@ public class MythItems {
     public static Supplier<Item> HADES_HELM;
 
     public static Supplier<Item> SATYR_SPAWN_EGG;
+    public static Supplier<Item> PEGASUS_SPAWN_EGG;
     public static Supplier<Item> NEMEAN_LION_SPAWN_EGG;
 
     public static void registerItems(){
@@ -34,6 +35,7 @@ public class MythItems {
         HADES_HELM = ITEMS.register("hades_helm", () -> new ArmorItem(MythArmorMaterials.HADES, ArmorItem.Type.HELMET, new Item.Properties().durability(450)));
 
         SATYR_SPAWN_EGG = ITEMS.register("satyr_spawn_egg", () -> new WrappedSpawnEggItem(MythEntities.SATYR, 0x978F88, 0xF7D1AB, new Item.Properties()));
+        PEGASUS_SPAWN_EGG = ITEMS.register("pegasus_spawn_egg", () -> new WrappedSpawnEggItem(MythEntities.PEGASUS, 0xA6A6A6, 0x858585, new Item.Properties()));
         NEMEAN_LION_SPAWN_EGG = ITEMS.register("nemean_lion_spawn_egg", () -> new WrappedSpawnEggItem(MythEntities.NEMEAN_LION, 0xDEA765, 0xB87B32, new Item.Properties()));
 
         ITEMS.register();

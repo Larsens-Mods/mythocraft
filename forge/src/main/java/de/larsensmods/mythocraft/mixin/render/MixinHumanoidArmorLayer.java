@@ -1,13 +1,9 @@
 package de.larsensmods.mythocraft.mixin.render;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.larsensmods.mythocraft.MythConfigValues;
 import de.larsensmods.mythocraft.client.RenderTypes;
-import de.larsensmods.mythocraft.client.mixincore.HumanoidArmorLayerMixinCore;
 import de.larsensmods.mythocraft.item.MythItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
