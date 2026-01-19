@@ -30,7 +30,7 @@ public class PegasusAnimations {
             ))
             .build();
 
-    public static final AnimationDefinition GRASSING = AnimationDefinition.Builder.withLength(2.0F).looping()
+    public static final AnimationDefinition GRASSING = AnimationDefinition.Builder.withLength(2.0F)
             .addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(7.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
                     new Keyframe(0.75F, KeyframeAnimations.degreeVec(92.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -112,7 +112,7 @@ public class PegasusAnimations {
             ))
             .build();
 
-    public static final AnimationDefinition REARING = AnimationDefinition.Builder.withLength(1.625F).looping()
+    public static final AnimationDefinition REARING = AnimationDefinition.Builder.withLength(1.625F)
             .addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(7.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
                     new Keyframe(0.375F, KeyframeAnimations.degreeVec(-5.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),

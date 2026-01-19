@@ -92,11 +92,15 @@ public class PegasusModel<T extends PegasusEntity> extends HierarchicalModel<T> 
 
         this.animateWalk(PegasusAnimations.WALK, limbSwing, limbSwingAmount, 2f, 2.5f);
         this.animate(entity.idleAnimationState, PegasusAnimations.IDLE, ageInTicks, 1f);
+        this.animate(entity.grassingAnimationState, PegasusAnimations.GRASSING, ageInTicks, 1f);
+        this.animate(entity.rearingAnimationState, PegasusAnimations.REARING, ageInTicks, 1f);
+        this.animate(entity.glidingAnimationState, PegasusAnimations.GLIDING, ageInTicks, 1f);
+        this.animate(entity.flyingAnimationState, PegasusAnimations.FLYING, ageInTicks, 1f);
     }
 
     private void applyHeadRotation(float headYaw, float headPitch) {
         headYaw = Mth.clamp(headYaw, -30.0f, 30.0f);
-        headPitch = Mth.clamp(headPitch, -35.0f, 35.0f);
+        headPitch = Mth.clamp(headPitch, 20.0f, 55.0f);
 
         this.head.yRot = headYaw * ((float) Math.PI / 180f);
         this.head.xRot = headPitch * ((float) Math.PI / 180f);

@@ -1,62 +1,137 @@
 package de.larsensmods.mythocraft.entity.friendly;
 
+import de.larsensmods.mythocraft.Constants;
 import de.larsensmods.mythocraft.entity.MythEntities;
 import net.minecraft.Util;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ByIdMap;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.DismountHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
 import java.util.function.IntFunction;
 
-public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity.Variant> {
+public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity.Variant>, FlyingAnimal, OwnableEntity, Saddleable, PlayerRideableJumping {
+
+    private static final int FLAG_TAMED = 2;
+    private static final int FLAG_SADDLED = 4;
+    private static final int FLAG_FLYING = 8;
+    private static final int FLAG_GRASSING = 16;
+    private static final int FLAG_REARING = 32;
 
     private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(PegasusEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Byte> FLAGS = SynchedEntityData.defineId(PegasusEntity.class, EntityDataSerializers.BYTE);
 
     public final AnimationState idleAnimationState = new AnimationState();
+    public final AnimationState grassingAnimationState = new AnimationState();
+    public final AnimationState rearingAnimationState = new AnimationState();
+    public final AnimationState glidingAnimationState = new AnimationState();
+    public final AnimationState flyingAnimationState = new AnimationState();
+
     private int idleAnimationTimeout = 0;
+
+    private int grassingCounter = 0;
+    private int rearingCounter = 0;
+
+    @Nullable
+    private UUID owner;
 
     public PegasusEntity(EntityType<? extends Animal> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+        this.moveControl = new FlyingMoveControl(this, 5, false);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(VARIANT, 0);
+        pBuilder.define(FLAGS, (byte) 0);
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag pCompound) {
+        super.addAdditionalSaveData(pCompound);
+        pCompound.putInt("variant", this.getVariantID());
+        pCompound.putBoolean("tamed", this.isTamed());
+        pCompound.putBoolean("saddled", this.isSaddled());
+        if(this.getOwnerUUID() != null){
+            pCompound.putUUID("owner", this.getOwnerUUID());
+        }
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag pCompound) {
+        super.readAdditionalSaveData(pCompound);
+        this.entityData.set(VARIANT, pCompound.getInt("variant"));
+        this.setTamed(pCompound.getBoolean("tamed"));
+        this.setSaddled(pCompound.getBoolean("saddled"));
+        if(pCompound.hasUUID("owner")){
+            this.setOwnerUUID(pCompound.getUUID("owner"));
+        }
+    }
+
+    private boolean getFlag(int flag){
+        return (this.entityData.get(FLAGS) & flag) != 0;
+    }
+
+    private void setFlag(int flag, boolean value){
+        byte b = this.entityData.get(FLAGS);
+        if(value){
+            this.entityData.set(FLAGS, (byte) (b | flag));
+        }else{
+            this.entityData.set(FLAGS, (byte) (b & ~flag));
+        }
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.2));
-        //this.goalSelector.addGoal(1, new RunAroundLikeCrazyGoal(this, 1.2));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0F, PegasusEntity.class));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.25F, stack -> stack.is(ItemTags.HORSE_TEMPT_ITEMS), false));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.0F));
-        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.7));
+        this.goalSelector.addGoal(6, new RandomStrollGoal(this, 0.7));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-        //this.goalSelector.addGoal(9, new RandomStandGoal(this));
-
     }
 
     @Override
@@ -98,6 +173,18 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
         }else{
             this.idleAnimationTimeout--;
         }
+
+        if(this.isGrassing()){
+            this.grassingAnimationState.startIfStopped(this.tickCount);
+        }else{
+            this.grassingAnimationState.stop();
+        }
+
+        if(this.isRearing()){
+            this.rearingAnimationState.startIfStopped(this.tickCount);
+        }else{
+            this.rearingAnimationState.stop();
+        }
     }
 
     @Override
@@ -124,13 +211,315 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
         return SoundEvents.HORSE_ANGRY;
     }
 
-    //Variant handling
+    public boolean isTamed(){
+        return this.getFlag(FLAG_TAMED);
+    }
+
+    public void setTamed(boolean tamed){
+        this.setFlag(FLAG_TAMED, tamed);
+    }
+
+    public boolean isGrassing(){
+        return this.getFlag(FLAG_GRASSING);
+    }
+
+    public void setGrassing(boolean grassing){
+        this.setFlag(FLAG_GRASSING, grassing);
+    }
+
+    public boolean isRearing(){
+        return this.getFlag(FLAG_REARING);
+    }
+
+    public void setRearing(boolean rearing){
+        if(rearing){
+            setGrassing(false);
+        }
+        this.setFlag(FLAG_REARING, rearing);
+    }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
-        super.defineSynchedData(pBuilder);
-        pBuilder.define(VARIANT, 0);
+    public boolean handleLeashAtDistance(@NotNull Entity pLeashHolder, float pDistance) {
+        if(pDistance > 6f && this.isGrassing()){
+            this.setGrassing(false);
+        }
+        return true;
     }
+
+    public void setFlying(boolean flying){
+        this.setFlag(FLAG_FLYING, flying);
+    }
+
+    @Override
+    public boolean isFlying() {
+        return !this.onGround() && this.getFlag(FLAG_FLYING);
+    }
+
+    @Override
+    public @Nullable UUID getOwnerUUID() {
+        return this.owner;
+    }
+
+    public void setOwnerUUID(@Nullable UUID owner){
+        this.owner = owner;
+    }
+
+    @Override
+    public void onPlayerJump(int i) {
+        if(this.isSaddled()){
+            Constants.LOG.debug("JUMP/FLY PEGASUS");
+        }
+    }
+
+    @Override
+    public boolean canJump() {
+        return this.isSaddled();
+    }
+
+    @Override
+    public void handleStartJump(int i) {
+        this.playJumpSound();
+    }
+
+    @Override
+    public void handleStopJump() {
+
+    }
+
+    @Override
+    public boolean isSaddleable() {
+        return this.isAlive() && !this.isBaby() && this.isTamed();
+    }
+
+    @Override
+    public void equipSaddle(@NotNull ItemStack itemStack, @Nullable SoundSource soundSource) {
+        this.setSaddled(true);
+    }
+
+    @Override
+    public boolean isSaddled() {
+        return this.getFlag(FLAG_SADDLED);
+    }
+
+    public void setSaddled(boolean saddled){
+        this.setFlag(FLAG_SADDLED, saddled);
+    }
+
+    @Override
+    public boolean isPushable() {
+        return !this.isVehicle();
+    }
+
+    @Override
+    protected boolean isImmobile() {
+        return super.isImmobile() && this.isVehicle() && this.isSaddled() || this.isGrassing() || this.isRearing();
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+
+        if(!this.level().isClientSide && this.isAlive()){
+            if (this.random.nextInt(900) == 0 && this.deathTime == 0) {
+                this.heal(1.0F);
+            }
+
+            if (!this.isGrassing() && !this.isVehicle() && this.random.nextInt(300) == 0 && this.level().getBlockState(this.blockPosition().below()).is(Blocks.GRASS_BLOCK)) {
+                this.setGrassing(true);
+                this.grassingCounter = 1;
+            }
+
+            if (this.isGrassing() && this.grassingCounter++ > 40) {
+                this.grassingCounter = 0;
+                this.setGrassing(false);
+            }
+            if(this.isRearing() && this.rearingCounter++ > 32) {
+                this.rearingCounter = 0;
+                this.setRearing(false);
+            }
+        }
+    }
+
+    public void startRearing(){
+        if(this.isEffectiveAi()) {
+            this.setRearing(true);
+            this.rearingCounter = 1;
+        }
+    }
+
+    @Override
+    public @NotNull InteractionResult mobInteract(@NotNull Player pPlayer, @NotNull InteractionHand pHand) {
+        if(!this.isVehicle() && !this.isBaby()){
+            this.doPlayerRide(pPlayer);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+        return super.mobInteract(pPlayer, pHand);
+    }
+
+    protected void doPlayerRide(Player pPlayer) {
+        this.setGrassing(false);
+        this.setRearing(false);
+        if (!this.level().isClientSide) {
+            pPlayer.setYRot(this.getYRot());
+            pPlayer.setXRot(this.getXRot());
+            pPlayer.startRiding(this);
+        }
+    }
+
+    public boolean tameByPlayer(@NotNull Player tamingPlayer){
+        this.setOwnerUUID(tamingPlayer.getUUID());
+        this.setTamed(true);
+        if(tamingPlayer instanceof ServerPlayer serverPlayer){
+            CriteriaTriggers.TAME_ANIMAL.trigger(serverPlayer, this);
+        }
+
+        this.level().broadcastEntityEvent(this, (byte) 7);
+        return true;
+    }
+
+    @Override
+    protected void tickRidden(@NotNull Player pPlayer, @NotNull Vec3 pTravelVector) {
+        super.tickRidden(pPlayer, pTravelVector);
+        Vec2 vec2 = this.getRiddenRotation(pPlayer);
+        this.setRot(vec2.y, vec2.x);
+        this.yRotO = this.yBodyRot = this.yHeadRot = this.getYRot();
+        if (this.isControlledByLocalInstance()) {
+            if (this.onGround()) {
+                this.setFlying(false);
+            }
+        }
+    }
+
+    protected Vec2 getRiddenRotation(LivingEntity pEntity) {
+        return new Vec2(pEntity.getXRot() * 0.5F, pEntity.getYRot());
+    }
+
+    @Override
+    protected @NotNull Vec3 getRiddenInput(Player pPlayer, @NotNull Vec3 pTravelVector) {
+        float f = pPlayer.xxa * 0.5F;
+        float f1 = pPlayer.zza;
+        if (f1 <= 0.0F) {
+            f1 *= 0.25F;
+        }
+
+        return new Vec3(f, 0.0, f1);
+    }
+
+    @Override
+    protected float getRiddenSpeed(@NotNull Player pPlayer) {
+        return (float) this.getAttributeValue(Attributes.MOVEMENT_SPEED);
+    }
+
+    protected void executeRidersJump(float pPlayerJumpPendingScale, Vec3 pTravelVector) {
+        double d0 = this.getJumpPower(pPlayerJumpPendingScale);
+        Vec3 vec3 = this.getDeltaMovement();
+        this.setDeltaMovement(vec3.x, d0, vec3.z);
+        this.setFlying(true);
+        this.hasImpulse = true;
+        if (pTravelVector.z > 0.0) {
+            float f = Mth.sin(this.getYRot() * (float) (Math.PI / 180.0));
+            float f1 = Mth.cos(this.getYRot() * (float) (Math.PI / 180.0));
+            this.setDeltaMovement(this.getDeltaMovement().add(-0.4F * f * pPlayerJumpPendingScale, 0.0, 0.4F * f1 * pPlayerJumpPendingScale));
+        }
+    }
+
+    protected void playJumpSound() {
+        this.playSound(SoundEvents.HORSE_JUMP, 0.4F, 1.0F);
+    }
+
+    protected void spawnTamingParticles(boolean pTamed) {
+        ParticleOptions particleoptions = pTamed ? ParticleTypes.HEART : ParticleTypes.SMOKE;
+
+        for (int i = 0; i < 7; i++) {
+            double d0 = this.random.nextGaussian() * 0.02;
+            double d1 = this.random.nextGaussian() * 0.02;
+            double d2 = this.random.nextGaussian() * 0.02;
+            this.level().addParticle(particleoptions, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), d0, d1, d2);
+        }
+    }
+
+    @Override
+    public void handleEntityEvent(byte pId) {
+        if (pId == 7) {
+            this.spawnTamingParticles(true);
+        } else if (pId == 6) {
+            this.spawnTamingParticles(false);
+        } else {
+            super.handleEntityEvent(pId);
+        }
+    }
+
+    @Override
+    protected void positionRider(@NotNull Entity pPassenger, Entity.@NotNull MoveFunction pCallback) {
+        super.positionRider(pPassenger, pCallback);
+        if (pPassenger instanceof LivingEntity) {
+            ((LivingEntity)pPassenger).yBodyRot = this.yBodyRot;
+        }
+    }
+
+    @Override
+    public @Nullable LivingEntity getControllingPassenger() {
+        if(this.isSaddled()){
+            Entity passenger = this.getFirstPassenger();
+            if(passenger instanceof Player p){
+                return p;
+            }
+        }
+
+        return super.getControllingPassenger();
+    }
+
+    @Nullable
+    private Vec3 getDismountLocationInDirection(Vec3 pDirection, LivingEntity pPassenger) {
+        double d0 = this.getX() + pDirection.x;
+        double d1 = this.getBoundingBox().minY;
+        double d2 = this.getZ() + pDirection.z;
+        BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+
+        for (Pose pose : pPassenger.getDismountPoses()) {
+            blockpos$mutableblockpos.set(d0, d1, d2);
+            double d3 = this.getBoundingBox().maxY + 0.75;
+
+            do {
+                double d4 = this.level().getBlockFloorHeight(blockpos$mutableblockpos);
+                if ((double)blockpos$mutableblockpos.getY() + d4 > d3) {
+                    break;
+                }
+
+                if (DismountHelper.isBlockFloorValid(d4)) {
+                    AABB aabb = pPassenger.getLocalBoundsForPose(pose);
+                    Vec3 vec3 = new Vec3(d0, (double)blockpos$mutableblockpos.getY() + d4, d2);
+                    if (DismountHelper.canDismountTo(this.level(), pPassenger, aabb.move(vec3))) {
+                        pPassenger.setPose(pose);
+                        return vec3;
+                    }
+                }
+
+                blockpos$mutableblockpos.move(Direction.UP);
+            } while (!((double)blockpos$mutableblockpos.getY() < d3));
+        }
+
+        return null;
+    }
+
+    @Override
+    public @NotNull Vec3 getDismountLocationForPassenger(LivingEntity pLivingEntity) {
+        Vec3 vec3 = getCollisionHorizontalEscapeVector(
+                this.getBbWidth(), pLivingEntity.getBbWidth(), this.getYRot() + (pLivingEntity.getMainArm() == HumanoidArm.RIGHT ? 90.0F : -90.0F)
+        );
+        Vec3 vec31 = this.getDismountLocationInDirection(vec3, pLivingEntity);
+        if (vec31 != null) {
+            return vec31;
+        } else {
+            Vec3 vec32 = getCollisionHorizontalEscapeVector(
+                    this.getBbWidth(), pLivingEntity.getBbWidth(), this.getYRot() + (pLivingEntity.getMainArm() == HumanoidArm.LEFT ? 90.0F : -90.0F)
+            );
+            Vec3 vec33 = this.getDismountLocationInDirection(vec32, pLivingEntity);
+            return vec33 != null ? vec33 : this.position();
+        }
+    }
+
+    //Variant handling
 
     private int getVariantID(){
         return this.entityData.get(VARIANT);
@@ -147,21 +536,12 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag pCompound) {
-        super.addAdditionalSaveData(pCompound);
-        pCompound.putInt("variant", this.getVariantID());
-    }
-
-    @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag pCompound) {
-        super.readAdditionalSaveData(pCompound);
-        this.entityData.set(VARIANT, pCompound.getInt("variant"));
-    }
-
-    @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor pLevel, @NotNull DifficultyInstance pDifficulty, @NotNull MobSpawnType pSpawnType, @Nullable SpawnGroupData pSpawnGroupData) {
         Variant variant = Util.getRandom(Variant.values(), this.random);
         this.setVariant(variant);
+        if (pSpawnGroupData == null) {
+            pSpawnGroupData = new AgeableMob.AgeableMobGroupData(false);
+        }
         return super.finalizeSpawn(pLevel, pDifficulty, pSpawnType, pSpawnGroupData);
     }
 
@@ -201,8 +581,9 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
 
     public static AttributeSupplier.Builder createAttributes() {
         return LivingEntity.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.2)
+                .add(Attributes.MAX_HEALTH, 40.0)
+                .add(Attributes.MOVEMENT_SPEED, 0.25)
+                .add(Attributes.FLYING_SPEED, 0.5)
                 .add(Attributes.FOLLOW_RANGE, 16.0);
     }
 
