@@ -31,15 +31,18 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.DismountHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
@@ -47,6 +50,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
 import java.util.UUID;
 import java.util.function.IntFunction;
 
@@ -74,6 +78,7 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
 
     @Nullable
     private UUID owner;
+    private int temper;
 
     public PegasusEntity(EntityType<? extends Animal> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -93,6 +98,7 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
         pCompound.putInt("variant", this.getVariantID());
         pCompound.putBoolean("tamed", this.isTamed());
         pCompound.putBoolean("saddled", this.isSaddled());
+        pCompound.putInt("temper", this.getTemper());
         if(this.getOwnerUUID() != null){
             pCompound.putUUID("owner", this.getOwnerUUID());
         }
@@ -104,6 +110,7 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
         this.entityData.set(VARIANT, pCompound.getInt("variant"));
         this.setTamed(pCompound.getBoolean("tamed"));
         this.setSaddled(pCompound.getBoolean("saddled"));
+        this.setTemper(pCompound.getInt("temper"));
         if(pCompound.hasUUID("owner")){
             this.setOwnerUUID(pCompound.getUUID("owner"));
         }
@@ -125,6 +132,7 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new PegasusRunAroundLikeCrazyGoal(this, 1.2));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.2));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0F, PegasusEntity.class));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.25F, stack -> stack.is(ItemTags.HORSE_TEMPT_ITEMS), false));
@@ -238,6 +246,24 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
         this.setFlag(FLAG_REARING, rearing);
     }
 
+    public int getTemper() {
+        return this.temper;
+    }
+
+    public void setTemper(int pTemper) {
+        this.temper = pTemper;
+    }
+
+    public int modifyTemper(int pAddedTemper) {
+        int i = Mth.clamp(this.getTemper() + pAddedTemper, 0, this.getMaxTemper());
+        this.setTemper(i);
+        return i;
+    }
+
+    public int getMaxTemper() {
+        return 100;
+    }
+
     @Override
     public boolean handleLeashAtDistance(@NotNull Entity pLeashHolder, float pDistance) {
         if(pDistance > 6f && this.isGrassing()){
@@ -349,7 +375,21 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
 
     @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player pPlayer, @NotNull InteractionHand pHand) {
-        if(!this.isVehicle() && !this.isBaby()){
+        boolean flag = !this.isBaby() && this.isTamed() && pPlayer.isSecondaryUseActive();
+        if (!this.isVehicle() && !flag) {
+            ItemStack itemstack = pPlayer.getItemInHand(pHand);
+            if (!itemstack.isEmpty()) {
+                if (this.isFood(itemstack)) {
+                    return this.fedFood(pPlayer, itemstack);
+                }
+
+                if (!this.isTamed()) {
+                    this.makeMad();
+                    return InteractionResult.sidedSuccess(this.level().isClientSide);
+                }
+            }
+        }
+        if(!this.isVehicle() && !this.isBaby() && !pPlayer.isSecondaryUseActive()){
             this.doPlayerRide(pPlayer);
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
@@ -375,6 +415,96 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
 
         this.level().broadcastEntityEvent(this, (byte) 7);
         return true;
+    }
+
+    public void makeMad() {
+        if (!this.isRearing()) {
+            this.startRearing();
+            this.makeSound(this.getAngrySound());
+        }
+
+    }
+
+    public InteractionResult fedFood(Player pPlayer, ItemStack pStack) {
+        boolean flag = this.handleEating(pPlayer, pStack);
+        if (flag) {
+            pStack.consume(1, pPlayer);
+        }
+
+        if (this.level().isClientSide) {
+            return InteractionResult.CONSUME;
+        } else {
+            return flag ? InteractionResult.SUCCESS : InteractionResult.PASS;
+        }
+    }
+
+    protected boolean handleEating(Player pPlayer, ItemStack pStack) {
+        boolean flag = false;
+        float f = 0.0F;
+        int i = 0;
+        int j = 0;
+        if (pStack.is(Items.WHEAT)) {
+            f = 2.0F;
+            i = 20;
+            j = 3;
+        } else if (pStack.is(Items.SUGAR)) {
+            f = 1.0F;
+            i = 30;
+            j = 3;
+        } else if (pStack.is(Blocks.HAY_BLOCK.asItem())) {
+            f = 20.0F;
+            i = 180;
+        } else if (pStack.is(Items.APPLE)) {
+            f = 3.0F;
+            i = 60;
+            j = 3;
+        } else if (pStack.is(Items.GOLDEN_CARROT)) {
+            f = 4.0F;
+            i = 60;
+            j = 5;
+            if (!this.level().isClientSide && this.isTamed() && this.getAge() == 0 && !this.isInLove()) {
+                flag = true;
+                this.setInLove(pPlayer);
+            }
+        } else if (pStack.is(Items.GOLDEN_APPLE) || pStack.is(Items.ENCHANTED_GOLDEN_APPLE)) {
+            f = 10.0F;
+            i = 240;
+            j = 10;
+            if (!this.level().isClientSide && this.isTamed() && this.getAge() == 0 && !this.isInLove()) {
+                flag = true;
+                this.setInLove(pPlayer);
+            }
+        }
+
+        if (this.getHealth() < this.getMaxHealth() && f > 0.0F) {
+            this.heal(f);
+            flag = true;
+        }
+
+        if (this.isBaby() && i > 0) {
+            this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0F), this.getRandomY() + (double)0.5F, this.getRandomZ(1.0F), 0.0F, 0.0F, 0.0F);
+            if (!this.level().isClientSide) {
+                this.ageUp(i);
+                flag = true;
+            }
+        }
+
+        if (j > 0 && (flag || !this.isTamed()) && this.getTemper() < this.getMaxTemper() && !this.level().isClientSide) {
+            this.modifyTemper(j);
+            flag = true;
+        }
+
+        if (flag) {
+            if (!this.isSilent()) {
+                SoundEvent soundevent = this.getEatingSound();
+                if (soundevent != null) {
+                    this.level().playSound(null, this.getX(), this.getY(), this.getZ(), soundevent, this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
+                }
+            }
+            this.gameEvent(GameEvent.EAT);
+        }
+
+        return flag;
     }
 
     @Override
@@ -574,6 +704,72 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
 
         public @NotNull String getSerializedName() {
             return this.name;
+        }
+    }
+
+    public static class PegasusRunAroundLikeCrazyGoal extends Goal {
+        private final PegasusEntity pegasus;
+        private final double speedModifier;
+        private double posX;
+        private double posY;
+        private double posZ;
+
+        public PegasusRunAroundLikeCrazyGoal(PegasusEntity pPegasus, double pSpeedModifier) {
+            this.pegasus = pPegasus;
+            this.speedModifier = pSpeedModifier;
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (!this.pegasus.isTamed() && this.pegasus.isVehicle()) {
+                Vec3 vec3 = DefaultRandomPos.getPos(this.pegasus, 5, 4);
+                if (vec3 == null) {
+                    return false;
+                } else {
+                    this.posX = vec3.x;
+                    this.posY = vec3.y;
+                    this.posZ = vec3.z;
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public void start() {
+            this.pegasus.getNavigation().moveTo(this.posX, this.posY, this.posZ, this.speedModifier);
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return !this.pegasus.isTamed() && !this.pegasus.getNavigation().isDone() && this.pegasus.isVehicle();
+        }
+
+        @Override
+        public void tick() {
+            if (!this.pegasus.isTamed() && this.pegasus.getRandom().nextInt(this.adjustedTickDelay(50)) == 0) {
+                Entity entity = this.pegasus.getFirstPassenger();
+                if (entity == null) {
+                    return;
+                }
+
+                if (entity instanceof Player player) {
+                    int i = this.pegasus.getTemper();
+                    int j = this.pegasus.getMaxTemper();
+                    if (j > 0 && this.pegasus.getRandom().nextInt(j) < i) {
+                        this.pegasus.tameByPlayer(player);
+                        return;
+                    }
+
+                    this.pegasus.modifyTemper(5);
+                }
+
+                this.pegasus.ejectPassengers();
+                this.pegasus.makeMad();
+                this.pegasus.level().broadcastEntityEvent(this.pegasus, (byte)6);
+            }
         }
     }
 
