@@ -17,6 +17,7 @@ public class PegasusModel<T extends PegasusEntity> extends HierarchicalModel<T> 
 
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "pegasus"), "main");
     private final ModelPart body;
+    private final ModelPart saddle;
     private final ModelPart left_wing;
     private final ModelPart right_wing;
     private final ModelPart tail;
@@ -25,14 +26,19 @@ public class PegasusModel<T extends PegasusEntity> extends HierarchicalModel<T> 
     private final ModelPart back_left_leg;
     private final ModelPart back_right_leg;
     private final ModelPart head;
+    private final ModelPart head_saddle;
     private final ModelPart mouth;
+    private final ModelPart mouth_saddle;
     private final ModelPart left_ear;
     private final ModelPart right_ear;
     private final ModelPart neck;
     private final ModelPart mane;
 
+    private final ModelPart[] saddleParts;
+
     public PegasusModel(ModelPart root) {
         this.body = root.getChild("body");
+        this.saddle = this.body.getChild("saddle");
         this.left_wing = this.body.getChild("left_wing");
         this.right_wing = this.body.getChild("right_wing");
         this.tail = this.body.getChild("tail");
@@ -41,11 +47,15 @@ public class PegasusModel<T extends PegasusEntity> extends HierarchicalModel<T> 
         this.back_left_leg = this.body.getChild("back_left_leg");
         this.back_right_leg = this.body.getChild("back_right_leg");
         this.head = this.body.getChild("head");
+        this.head_saddle = this.head.getChild("head_saddle");
         this.mouth = this.head.getChild("mouth");
+        this.mouth_saddle = this.mouth.getChild("mouth_saddle");
         this.left_ear = this.head.getChild("left_ear");
         this.right_ear = this.head.getChild("right_ear");
         this.neck = this.head.getChild("neck");
         this.mane = this.neck.getChild("mane");
+
+        this.saddleParts = new ModelPart[]{this.saddle, this.head_saddle, this.mouth_saddle};
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -53,6 +63,8 @@ public class PegasusModel<T extends PegasusEntity> extends HierarchicalModel<T> 
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         PartDefinition body = partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 32).addBox(-5.0F, -8.0F, -17.0F, 10.0F, 10.0F, 22.0F, new CubeDeformation(0.05F)), PartPose.offset(0.0F, 11.0F, 6.0F));
+
+        PartDefinition saddle = body.addOrReplaceChild("saddle", CubeListBuilder.create().texOffs(26, 0).addBox(-5.0F, -8.0F, -9.0F, 10.0F, 9.0F, 9.0F, new CubeDeformation(0.15F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition left_wing = body.addOrReplaceChild("left_wing", CubeListBuilder.create().texOffs(0, 64).addBox(0.1783F, -1.4352F, -5.185F, 1.0F, 9.0F, 22.0F, new CubeDeformation(0.0F)), PartPose.offset(5.0F, -6.0F, -8.0F));
 
@@ -72,7 +84,13 @@ public class PegasusModel<T extends PegasusEntity> extends HierarchicalModel<T> 
 
         PartDefinition head = body.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 13).addBox(-3.0F, -12.5159F, -2.7561F, 6.0F, 5.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -5.7399F, -15.3481F, 0.6109F, 0.0F, 0.0F));
 
+        PartDefinition head_saddle = head.addOrReplaceChild("head_saddle", CubeListBuilder.create().texOffs(0, 0).addBox(-3.0F, -12.5159F, -2.7561F, 6.0F, 5.0F, 7.0F, new CubeDeformation(0.1F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+
         PartDefinition mouth = head.addOrReplaceChild("mouth", CubeListBuilder.create().texOffs(0, 25).addBox(-2.0F, -11.0F, -7.0F, 4.0F, 5.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.5159F, -0.7561F));
+
+        PartDefinition mouth_saddle = mouth.addOrReplaceChild("mouth_saddle", CubeListBuilder.create().texOffs(19, 0).addBox(-2.0F, -11.0F, -4.0F, 4.0F, 5.0F, 2.0F, new CubeDeformation(0.1F))
+                .texOffs(29, 5).addBox(2.0F, -9.0461F, -5.8325F, 1.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(29, 5).mirror().addBox(-3.0F, -9.0461F, -5.8325F, 1.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition left_ear = head.addOrReplaceChild("left_ear", CubeListBuilder.create().texOffs(19, 16).addBox(0.55F, -13.0F, 4.0F, 2.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -2.5159F, -0.7661F));
 
@@ -86,9 +104,13 @@ public class PegasusModel<T extends PegasusEntity> extends HierarchicalModel<T> 
     }
 
     @Override
-    public void setupAnim(PegasusEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(@NotNull PegasusEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.root().getAllParts().forEach(ModelPart::resetPose);
         this.applyHeadRotation(netHeadYaw, headPitch);
+
+        for(ModelPart saddlePart : this.saddleParts){
+            saddlePart.visible = entity.isSaddled();
+        }
 
         this.animateWalk(PegasusAnimations.WALK, limbSwing, limbSwingAmount, 2f, 2.5f);
         this.animate(entity.idleAnimationState, PegasusAnimations.IDLE, ageInTicks, 1f);
