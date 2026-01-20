@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.Mth;
@@ -29,7 +30,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.animal.Animal;
@@ -61,6 +61,7 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
     private static final int FLAG_FLYING = 8;
     private static final int FLAG_GRASSING = 16;
     private static final int FLAG_REARING = 32;
+    private static final int FLAG_GLIDING = 64;
 
     private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(PegasusEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Byte> FLAGS = SynchedEntityData.defineId(PegasusEntity.class, EntityDataSerializers.BYTE);
@@ -72,9 +73,14 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
     public final AnimationState flyingAnimationState = new AnimationState();
 
     private int idleAnimationTimeout = 0;
+    private int glidingAnimationTimeout = -1;
 
     private int grassingCounter = 0;
     private int rearingCounter = 0;
+
+    private int fallingTicks = 0;
+    private double lastGlidingVelocity = Double.NEGATIVE_INFINITY;
+    private long lastGlidingCalculation = 0;
 
     @Nullable
     private UUID owner;
@@ -82,7 +88,6 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
 
     public PegasusEntity(EntityType<? extends Animal> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
-        this.moveControl = new FlyingMoveControl(this, 5, false);
     }
 
     @Override
@@ -171,6 +176,28 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
         super.tick();
         if(this.level().isClientSide()){
             this.setupAnimStates();
+        }else {
+            if (!this.onGround() && this.getControllingPassenger() == null && this.getDeltaMovement().y < 0) {
+                this.fallingTicks++;
+                if (this.fallingTicks >= 10) {
+                    this.setGliding(true);
+                    this.setRearing(false);
+                    this.setGrassing(false);
+                    this.calculateGlidingMovements();
+                }
+            } else {
+                this.fallingTicks = 0;
+            }
+        }
+    }
+
+    private void calculateGlidingMovements(){
+        Vec3 movement = this.getDeltaMovement();
+        if(movement.y < -0.25){
+            Vec3 calcMovement = new Vec3(movement.x * 1.1, movement.y * 0.9, movement.z * 1.1);
+            this.setDeltaMovement(calcMovement);
+            this.lastGlidingVelocity = calcMovement.y;
+            this.lastGlidingCalculation = this.tickCount;
         }
     }
 
@@ -192,6 +219,53 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
             this.rearingAnimationState.startIfStopped(this.tickCount);
         }else{
             this.rearingAnimationState.stop();
+        }
+
+        if(this.isGliding()){
+            if(this.glidingAnimationTimeout <= 0){
+                this.glidingAnimationTimeout = 30;
+                this.glidingAnimationState.start(this.tickCount);
+            }else{
+                this.glidingAnimationTimeout--;
+            }
+        }else{
+            this.glidingAnimationTimeout = -1;
+            this.glidingAnimationState.stop();
+        }
+    }
+
+    @Override
+    public boolean causeFallDamage(float pFallDistance, float pMultiplier, @NotNull DamageSource pSource) {
+        if (pFallDistance > 1.0F) {
+            this.playSound(SoundEvents.HORSE_LAND, 0.4F, 1.0F);
+        }
+
+        int i = this.calculateFallDamage(pFallDistance, pMultiplier);
+        if (i <= 0) {
+            return false;
+        } else {
+            this.hurt(pSource, i);
+            if (this.isVehicle()) {
+                for(Entity entity : this.getIndirectPassengers()) {
+                    entity.hurt(pSource, i);
+                }
+            }
+
+            this.playBlockFallSound();
+            return true;
+        }
+    }
+
+    @Override
+    protected int calculateFallDamage(float pFallDistance, float pDamageMultiplier) {
+        if((this.isGliding() || this.lastGlidingCalculation + 3 > this.tickCount) && this.lastGlidingVelocity > -0.375){
+            this.setGliding(false);
+            return 0;
+        }else {
+            double safeFallDist = this.getAttributeValue(Attributes.SAFE_FALL_DISTANCE);
+            double calcFallDist = pFallDistance - safeFallDist;
+            this.setGliding(false);
+            return Mth.ceil((calcFallDist * pDamageMultiplier) * this.getAttributeValue(Attributes.FALL_DAMAGE_MULTIPLIER));
         }
     }
 
@@ -279,6 +353,14 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
     @Override
     public boolean isFlying() {
         return !this.onGround() && this.getFlag(FLAG_FLYING);
+    }
+
+    public void setGliding(boolean gliding){
+        this.setFlag(FLAG_GLIDING, gliding);
+    }
+
+    public boolean isGliding(){
+        return !this.onGround() && this.getFlag(FLAG_GLIDING);
     }
 
     @Override
