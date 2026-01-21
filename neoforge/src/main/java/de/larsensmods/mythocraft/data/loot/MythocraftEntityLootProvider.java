@@ -1,6 +1,7 @@
 package de.larsensmods.mythocraft.data.loot;
 
 import de.larsensmods.mythocraft.entity.MythEntities;
+import de.larsensmods.mythocraft.entity.friendly.PegasusEntity;
 import de.larsensmods.mythocraft.entity.friendly.SatyrEntity;
 import de.larsensmods.mythocraft.entity.monster.NemeanLionEntity;
 import net.minecraft.core.HolderLookup;
@@ -26,6 +27,7 @@ public class MythocraftEntityLootProvider extends EntityLootSubProvider {
     @Override
     public void generate() {
         add(MythEntities.NEMEAN_LION.get(), NemeanLionEntity.getLootTableBuilder());
+        add(MythEntities.PEGASUS.get(), PegasusEntity.getLootTableBuilder());
         add(MythEntities.SATYR.get(), SatyrEntity.getLootTableBuilder());
     }
 }

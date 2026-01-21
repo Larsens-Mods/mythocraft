@@ -3,6 +3,7 @@ package de.larsensmods.mythocraft.data;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.BiomeTagsProvider;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biomes;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,5 +19,7 @@ public class MythocraftBiomeTagProvider extends BiomeTagsProvider {
     protected void addTags(HolderLookup.@NotNull Provider wrapperLookup) {
         tag(MythocraftBiomeTags.HAS_GREEK_TEMPLE)
                 .add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.DESERT, Biomes.SNOWY_PLAINS);
+        tag(MythocraftBiomeTags.SPAWNS_PEGASUS)
+                .add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.SAVANNA, Biomes.SAVANNA_PLATEAU, Biomes.WINDSWEPT_SAVANNA);
     }
 }

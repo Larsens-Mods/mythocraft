@@ -9,8 +9,8 @@
   ],
   "client": [
     "MixinLivingEntityRenderer",
-    "MixinMinecraft",
-    "accessor.RenderTypeAccessor"
+    "accessor.RenderTypeAccessor",
+    "client.MixinCapeLayer"
   ],
   "server": [],
   "injectors": {

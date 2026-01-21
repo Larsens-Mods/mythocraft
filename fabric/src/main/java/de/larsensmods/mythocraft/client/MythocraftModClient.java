@@ -1,10 +1,7 @@
 package de.larsensmods.mythocraft.client;
 
 import de.larsensmods.mythocraft.entity.MythEntities;
-import de.larsensmods.mythocraft.entity.client.NemeanLionModel;
-import de.larsensmods.mythocraft.entity.client.NemeanLionRenderer;
-import de.larsensmods.mythocraft.entity.client.SatyrModel;
-import de.larsensmods.mythocraft.entity.client.SatyrRenderer;
+import de.larsensmods.mythocraft.entity.client.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -22,11 +19,13 @@ public class MythocraftModClient implements ClientModInitializer {
 
     private void registerEntityRenderers(){
         EntityRendererRegistry.register(MythEntities.SATYR.get(), SatyrRenderer::new);
+        EntityRendererRegistry.register(MythEntities.PEGASUS.get(), PegasusRenderer::new);
         EntityRendererRegistry.register(MythEntities.NEMEAN_LION.get(), NemeanLionRenderer::new);
     }
 
     private void registerEntityModelLayers(){
         EntityModelLayerRegistry.registerModelLayer(SatyrModel.LAYER_LOCATION, SatyrModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(PegasusModel.LAYER_LOCATION, PegasusModel::createBodyLayer);
         EntityModelLayerRegistry.registerModelLayer(NemeanLionModel.LAYER_LOCATION, NemeanLionModel::createBodyLayer);
     }
 }
