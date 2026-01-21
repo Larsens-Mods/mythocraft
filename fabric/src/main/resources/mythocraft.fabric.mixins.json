@@ -6,7 +6,6 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [],
   "client": [
-    "MixinTitleScreen",
     "render.MixinElytraLayer",
     "render.MixinHumanoidArmorLayer"
   ],
