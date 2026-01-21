@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#mythocraft:spawns_pegasus",
+  "spawners": {
+    "type": "mythocraft:pegasus",
+    "maxCount": 4,
+    "minCount": 2,
+    "weight": 1
+  }
+}

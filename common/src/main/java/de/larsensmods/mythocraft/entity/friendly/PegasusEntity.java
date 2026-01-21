@@ -41,7 +41,12 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -197,6 +202,14 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
             child.setVariant(variant);
         }
         return child;
+    }
+
+    @Override
+    protected void dropAllDeathLoot(@NotNull ServerLevel pLevel, @NotNull DamageSource pDamageSource) {
+        super.dropAllDeathLoot(pLevel, pDamageSource);
+        if(this.isSaddled()){
+            this.spawnAtLocation(new ItemStack(Items.SADDLE));
+        }
     }
 
     @Override
@@ -968,6 +981,17 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
     }
 
     public static LootTable.Builder getLootTableBuilder(){
-        return LootTable.lootTable();
+        return LootTable.lootTable()
+                .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 2)))
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1))
+                        .setBonusRolls(ConstantValue.exactly(1))
+                        .add(LootItem.lootTableItem(Items.FEATHER))
+                )
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1))
+                        .setBonusRolls(ConstantValue.exactly(1))
+                        .add(LootItem.lootTableItem(Items.LEATHER))
+                );
     }
 }

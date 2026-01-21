@@ -1,6 +1,7 @@
 package de.larsensmods.mythocraft.data.loot;
 
 import de.larsensmods.mythocraft.data.MythocraftLootTables;
+import de.larsensmods.mythocraft.entity.friendly.PegasusEntity;
 import de.larsensmods.mythocraft.entity.monster.NemeanLionEntity;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.SimpleFabricLootTableProvider;
@@ -21,5 +22,6 @@ public class MythocraftEntityLootProvider extends SimpleFabricLootTableProvider 
     @Override
     public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {
         output.accept(MythocraftLootTables.NEMEAN_LION_LOOT, NemeanLionEntity.getLootTableBuilder());
+        output.accept(MythocraftLootTables.PEGASUS_LOOT, PegasusEntity.getLootTableBuilder());
     }
 }
