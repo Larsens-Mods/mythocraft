@@ -33,5 +33,7 @@ public class MythocraftModelProvider extends FabricModelProvider {
         itemModelGenerator.generateFlatItem(MythItems.SATYR_SPAWN_EGG.get(), new ModelTemplate(Optional.of(ResourceLocation.withDefaultNamespace("item/template_spawn_egg")), Optional.empty()));
         itemModelGenerator.generateFlatItem(MythItems.PEGASUS_SPAWN_EGG.get(), new ModelTemplate(Optional.of(ResourceLocation.withDefaultNamespace("item/template_spawn_egg")), Optional.empty()));
         itemModelGenerator.generateFlatItem(MythItems.NEMEAN_LION_SPAWN_EGG.get(), new ModelTemplate(Optional.of(ResourceLocation.withDefaultNamespace("item/template_spawn_egg")), Optional.empty()));
+        itemModelGenerator.generateFlatItem(MythItems.CYCLOPS_SPAWN_EGG.get(), new ModelTemplate(Optional.of(ResourceLocation.withDefaultNamespace("item/template_spawn_egg")), Optional.empty()));
+        itemModelGenerator.generateFlatItem(MythItems.BLACKSMITH_CYCLOPS_SPAWN_EGG.get(), new ModelTemplate(Optional.of(ResourceLocation.withDefaultNamespace("item/template_spawn_egg")), Optional.empty()));
     }
 }

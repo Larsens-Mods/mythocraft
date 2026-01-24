@@ -5,6 +5,8 @@ import de.larsensmods.mythocraft.entity.MythEntities;
 import de.larsensmods.mythocraft.entity.client.NemeanLionRenderer;
 import de.larsensmods.mythocraft.entity.client.PegasusRenderer;
 import de.larsensmods.mythocraft.entity.client.SatyrRenderer;
+import de.larsensmods.mythocraft.entity.client.cyclops.BlacksmithCyclopsRenderer;
+import de.larsensmods.mythocraft.entity.client.cyclops.CyclopsRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,6 +21,8 @@ public class ClientModEventBusEvents {
         EntityRenderers.register(MythEntities.SATYR.get(), SatyrRenderer::new);
         EntityRenderers.register(MythEntities.PEGASUS.get(), PegasusRenderer::new);
         EntityRenderers.register(MythEntities.NEMEAN_LION.get(), NemeanLionRenderer::new);
+        EntityRenderers.register(MythEntities.CYCLOPS.get(), CyclopsRenderer::new);
+        EntityRenderers.register(MythEntities.BLACKSMITH_CYCLOPS.get(), BlacksmithCyclopsRenderer::new);
     }
 
 }
