@@ -23,6 +23,20 @@ public class MythStructureTemplatePools {
                 ),
                 StructureTemplatePool.Projection.RIGID
         ));
+        structureTemplatePoolBootstrapContext.register(MythocraftStructureTemplatePools.CYCLOPS_CAVE, new StructureTemplatePool(
+                structureTemplatePoolHolderGetter.getOrThrow(Pools.EMPTY),
+                List.of(
+                        Pair.of(StructurePoolElement.single("mythocraft:cyclops_cave"), 1)
+                ),
+                StructureTemplatePool.Projection.RIGID
+        ));
+        structureTemplatePoolBootstrapContext.register(MythocraftStructureTemplatePools.CYCLOPS_PEN, new StructureTemplatePool(
+                structureTemplatePoolHolderGetter.getOrThrow(Pools.EMPTY),
+                List.of(
+                        Pair.of(StructurePoolElement.single("mythocraft:cyclops_pen"), 1)
+                ),
+                StructureTemplatePool.Projection.RIGID
+        ));
     }
 
 }

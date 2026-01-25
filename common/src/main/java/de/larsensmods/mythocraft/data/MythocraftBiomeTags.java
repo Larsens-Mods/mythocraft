@@ -9,6 +9,7 @@ import net.minecraft.world.level.biome.Biome;
 public class MythocraftBiomeTags {
 
     public static final TagKey<Biome> HAS_GREEK_TEMPLE = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "has_greek_temple"));
+    public static final TagKey<Biome> HAS_CYCLOPS_CAVE = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "has_cyclops_cave"));
     public static final TagKey<Biome> SPAWNS_PEGASUS = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "spawns_pegasus"));
 
 }

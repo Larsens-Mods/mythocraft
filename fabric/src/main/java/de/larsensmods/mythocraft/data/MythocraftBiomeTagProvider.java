@@ -20,6 +20,8 @@ public class MythocraftBiomeTagProvider extends FabricTagProvider<Biome> {
     protected void addTags(HolderLookup.Provider wrapperLookup) {
         tag(MythocraftBiomeTags.HAS_GREEK_TEMPLE)
                 .add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.DESERT, Biomes.SNOWY_PLAINS);
+        tag(MythocraftBiomeTags.HAS_CYCLOPS_CAVE)
+                .add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.FOREST);
         tag(MythocraftBiomeTags.SPAWNS_PEGASUS)
                 .add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.SAVANNA, Biomes.SAVANNA_PLATEAU, Biomes.WINDSWEPT_SAVANNA);
     }

@@ -21,6 +21,12 @@ public class MythStructureSets {
                         32, 12, RandomSpreadType.LINEAR, 83476973
                 )
         ));
+        structureSetBootstrapContext.register(MythocraftStructureSets.CYCLOPS_CAVE, new StructureSet(
+                structureHolderGetter.getOrThrow(MythocraftStructures.CYCLOPS_CAVE),
+                new RandomSpreadStructurePlacement(
+                        32, 12, RandomSpreadType.LINEAR, 24976475
+                )
+        ));
     }
 
 }
