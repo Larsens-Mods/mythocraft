@@ -33,7 +33,7 @@ public class MythStructureTemplatePools {
         structureTemplatePoolBootstrapContext.register(MythocraftStructureTemplatePools.CYCLOPS_PEN, new StructureTemplatePool(
                 structureTemplatePoolHolderGetter.getOrThrow(Pools.EMPTY),
                 List.of(
-                        Pair.of(StructurePoolElement.single("mythocraft:cyclops_pen"), 1)
+                        Pair.of(StructurePoolElement.single("mythocraft:cyclops_sheep_pen"), 1)
                 ),
                 StructureTemplatePool.Projection.RIGID
         ));

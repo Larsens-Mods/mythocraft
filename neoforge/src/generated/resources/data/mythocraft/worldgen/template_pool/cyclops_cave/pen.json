@@ -3,7 +3,7 @@
     {
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "mythocraft:cyclops_pen",
+        "location": "mythocraft:cyclops_sheep_pen",
         "processors": {
           "processors": []
         },

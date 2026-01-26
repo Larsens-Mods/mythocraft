@@ -1,10 +1,10 @@
-// 1.21	2026-01-25T18:06:48.323173	Registries
+// 1.21	2026-01-26T22:08:08.1309035	Registries
 061203cb013760c1c52f07d274217a03e3a65745 data/mythocraft/forge/biome_modifier/spawn_pegasus.json
 df3efdaa00cba046c1c15060b4cde82c8fb00f1d data/mythocraft/forge/biome_modifier/spawn_satyr.json
 26792a0e75797ef58b5dddf7b2e157ffb5efbafd data/mythocraft/worldgen/structure/cyclops_cave.json
 2616edd025ac8ffaac800d3d43e37c00c3da4c4b data/mythocraft/worldgen/structure/greek_temple.json
-1842d6987246b4a14d40a4f57477f0364fe36a93 data/mythocraft/worldgen/structure_set/cyclops_cave.json
+46d0e095f7792a3cf47f09f974bafdb584b2cc74 data/mythocraft/worldgen/structure_set/cyclops_cave.json
 7065ed1043518463aa6fb218e7b93836d8161b4e data/mythocraft/worldgen/structure_set/greek_temple.json
 5095d10d2e210c0132bcd508beae8e2e969c60e0 data/mythocraft/worldgen/template_pool/cyclops_cave/cyclops_cave.json
-70e9ba2c8422ba4d5e0b0c7d142f2667eb37e72e data/mythocraft/worldgen/template_pool/cyclops_cave/pen.json
+5442aadf0f8a3019a8b6678609249c056eac94aa data/mythocraft/worldgen/template_pool/cyclops_cave/pen.json
 82b09aadf456843480795ec2ac5c2861fc8ef1d4 data/mythocraft/worldgen/template_pool/greek_temple.json

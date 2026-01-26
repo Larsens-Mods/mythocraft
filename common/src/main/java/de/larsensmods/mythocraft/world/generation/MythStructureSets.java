@@ -24,7 +24,7 @@ public class MythStructureSets {
         structureSetBootstrapContext.register(MythocraftStructureSets.CYCLOPS_CAVE, new StructureSet(
                 structureHolderGetter.getOrThrow(MythocraftStructures.CYCLOPS_CAVE),
                 new RandomSpreadStructurePlacement(
-                        32, 12, RandomSpreadType.LINEAR, 24976475
+                        32, 15, RandomSpreadType.LINEAR, 24976475
                 )
         ));
     }
