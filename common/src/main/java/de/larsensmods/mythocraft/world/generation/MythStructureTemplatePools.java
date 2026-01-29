@@ -37,6 +37,13 @@ public class MythStructureTemplatePools {
                 ),
                 StructureTemplatePool.Projection.RIGID
         ));
+        structureTemplatePoolBootstrapContext.register(MythocraftStructureTemplatePools.CYCLOPS_FORGE, new StructureTemplatePool(
+                structureTemplatePoolHolderGetter.getOrThrow(Pools.EMPTY),
+                List.of(
+                        Pair.of(StructurePoolElement.single("mythocraft:cyclops_forge"), 1)
+                ),
+                StructureTemplatePool.Projection.RIGID
+        ));
     }
 
 }

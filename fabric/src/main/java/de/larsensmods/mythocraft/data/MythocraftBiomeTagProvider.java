@@ -22,6 +22,8 @@ public class MythocraftBiomeTagProvider extends FabricTagProvider<Biome> {
                 .add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.DESERT, Biomes.SNOWY_PLAINS);
         tag(MythocraftBiomeTags.HAS_CYCLOPS_CAVE)
                 .add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.FOREST);
+        tag(MythocraftBiomeTags.HAS_CYCLOPS_FORGE)
+                .add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.DESERT, Biomes.SAVANNA, Biomes.SAVANNA_PLATEAU, Biomes.WINDSWEPT_SAVANNA);
         tag(MythocraftBiomeTags.SPAWNS_PEGASUS)
                 .add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.SAVANNA, Biomes.SAVANNA_PLATEAU, Biomes.WINDSWEPT_SAVANNA);
     }
