@@ -87,7 +87,7 @@ public class BlacksmithCyclopsAnimations {
             ))
             .build();
 
-    public static final AnimationDefinition SMITHING = AnimationDefinition.Builder.withLength(2.75F)
+    public static final AnimationDefinition SMITHING = AnimationDefinition.Builder.withLength(2.75F).looping()
             .addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 2.5F), AnimationChannel.Interpolations.CATMULLROM),
                     new Keyframe(0.75F, KeyframeAnimations.degreeVec(-55.0F, 0.0F, 2.5F), AnimationChannel.Interpolations.CATMULLROM),
