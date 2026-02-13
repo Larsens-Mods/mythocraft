@@ -20,8 +20,8 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.npc.InventoryCarrier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -39,15 +39,15 @@ import java.util.function.Function;
 public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarrier {
 
     private static final Block CHEST_BLOCK_TYPE = Blocks.TRAPPED_CHEST;
-    private static final Function<ItemLike, Boolean> PICKUP_VALIDATOR = (item) -> {
+    private static final Function<Item, Boolean> PICKUP_VALIDATOR = (item) -> {
         for(BlacksmithCyclopsRecipe recipe : BlacksmithCyclopsRecipe.RECIPES){
-            if(recipe.ingredients().containsKey(item.asItem())){
+            if(recipe.ingredients().containsKey(item)){
                 return true;
             }
         }
         return false;
     };
-    private static final Function<ItemLike, Boolean> PUT_DOWN_VALIDATOR = item -> !PICKUP_VALIDATOR.apply(item);
+    private static final Function<Item, Boolean> PUT_DOWN_VALIDATOR = (item) -> !PICKUP_VALIDATOR.apply(item) && !item.equals(Items.AIR);
 
     private final SimpleContainer inventory = new SimpleContainer(4);
 
@@ -138,6 +138,7 @@ public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarr
     }
 
     public void scanForAnvils(){
+        //TODO: Search from center outwards to find the closest anvil
         if (this.currentAnvil == null || !(this.blockPosition().distSqr(this.currentAnvil) < 48) || !this.level().getBlockState(this.currentAnvil).is(BlockTags.ANVIL)) {
             this.currentAnvil = null;
             for (int xRel = -24; xRel <= 24; xRel++) {
@@ -154,6 +155,7 @@ public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarr
     }
 
     public void scanForChests(){
+        //TODO: Search from center outwards to find the closest chest
         if (this.currentChest == null || !(this.blockPosition().distSqr(this.currentChest) < 48) || !this.level().getBlockState(this.currentChest).is(CHEST_BLOCK_TYPE)) {
             this.currentChest = null;
             for (int xRel = -24; xRel <= 24; xRel++) {

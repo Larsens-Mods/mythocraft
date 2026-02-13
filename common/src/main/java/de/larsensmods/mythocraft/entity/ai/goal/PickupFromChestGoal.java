@@ -5,8 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.npc.InventoryCarrier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.Vec3;
@@ -20,9 +20,9 @@ public class PickupFromChestGoal extends Goal {
     private final PathfinderMob mob;
     private final InventoryCarrier carrier;
     private final Supplier<BlockPos> chestPosSupplier;
-    private final Function<ItemLike, Boolean> pickupValidator;
+    private final Function<Item, Boolean> pickupValidator;
 
-    public PickupFromChestGoal(PathfinderMob mob, InventoryCarrier carrier, Supplier<BlockPos> chestPosSupplier, Function<ItemLike, Boolean> pickupValidator) {
+    public PickupFromChestGoal(PathfinderMob mob, InventoryCarrier carrier, Supplier<BlockPos> chestPosSupplier, Function<Item, Boolean> pickupValidator) {
         this.mob = mob;
         this.carrier = carrier;
         this.chestPosSupplier = chestPosSupplier;
@@ -38,7 +38,7 @@ public class PickupFromChestGoal extends Goal {
             return false;
         }
         boolean inventoryNotFull = false;
-        for(int i = 0; i < carrier.getInventory().getContainerSize(); i++){
+        for(int i = 0; i < carrier.getInventory().getContainerSize() - 1; i++){ // Keep one slot free
             if(carrier.getInventory().getItem(i).isEmpty()){
                 inventoryNotFull = true;
                 break;

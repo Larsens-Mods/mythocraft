@@ -5,8 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.npc.InventoryCarrier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.Vec3;
@@ -20,9 +20,9 @@ public class PutIntoChestGoal extends Goal {
     private final PathfinderMob mob;
     private final InventoryCarrier carrier;
     private final Supplier<BlockPos> chestPosSupplier;
-    private final Function<ItemLike, Boolean> putDownValidator;
+    private final Function<Item, Boolean> putDownValidator;
 
-    public PutIntoChestGoal(PathfinderMob mob, InventoryCarrier carrier, Supplier<BlockPos> chestPosSupplier, Function<ItemLike, Boolean> putDownValidator) {
+    public PutIntoChestGoal(PathfinderMob mob, InventoryCarrier carrier, Supplier<BlockPos> chestPosSupplier, Function<Item, Boolean> putDownValidator) {
         this.mob = mob;
         this.carrier = carrier;
         this.chestPosSupplier = chestPosSupplier;
