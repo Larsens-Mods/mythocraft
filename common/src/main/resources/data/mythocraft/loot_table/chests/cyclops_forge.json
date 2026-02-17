@@ -4,19 +4,19 @@
     {
       "rolls": {
         "type": "minecraft:uniform",
-        "min": 2,
-        "max": 4
+        "min": 1,
+        "max": 3
       },
       "bonus_rolls": {
         "type": "minecraft:uniform",
         "min": 0,
-        "max": 2
+        "max": 1
       },
       "entries": [
         {
           "type": "minecraft:item",
           "name": "mythocraft:ambrosia",
-          "weight": 8,
+          "weight": 3,
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -29,10 +29,40 @@
           ]
         },
         {
-          "type": "minecraft:tag",
-          "name": "minecraft:wool",
+          "type": "minecraft:item",
+          "name": "minecraft:copper_ingot",
           "expand": true,
-          "weight": 1,
+          "weight": 4,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:binomial",
+                "n": 6,
+                "p": 2
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:gold_ingot",
+          "weight": 3,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:binomial",
+                "n": 4,
+                "p": 1
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:iron_ingot",
+          "weight": 2,
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -46,22 +76,22 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:mutton",
-          "weight": 6,
+          "name": "minecraft:gold_nugget",
+          "weight": 4,
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:binomial",
-                "n": 5,
-                "p": 1
+                "n": 7,
+                "p": 3
               }
             }
           ]
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:cooked_mutton",
+          "name": "minecraft:iron_nugget",
           "weight": 3,
           "functions": [
             {
@@ -69,7 +99,7 @@
               "count": {
                 "type": "minecraft:binomial",
                 "n": 4,
-                "p": 1
+                "p": 2
               }
             }
           ]
@@ -78,5 +108,5 @@
     }
   ],
   "functions": [],
-  "random_sequence": "mythocraft:chests/cyclops_cave"
+  "random_sequence": "mythocraft:chests/cyclops_forge"
 }
