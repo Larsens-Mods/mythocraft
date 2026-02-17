@@ -10,6 +10,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
@@ -21,6 +23,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -137,16 +140,42 @@ public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarr
         this.readInventoryFromTag(pCompound, this.registryAccess());
     }
 
+    @Override
+    public boolean isOnFire() {
+        return false;
+    }
+
+    @Override
+    public void handleDamageEvent(@NotNull DamageSource pDamageSource) {
+        //Prevent fire-related damages since cyclopses are immune to them
+        if(pDamageSource.is(DamageTypes.IN_FIRE) || pDamageSource.is(DamageTypes.ON_FIRE) || pDamageSource.is(DamageTypes.LAVA) || pDamageSource.is(DamageTypes.FIREBALL) || pDamageSource.is(DamageTypes.CAMPFIRE)){
+            return;
+        }
+        super.handleDamageEvent(pDamageSource);
+    }
+
+    @Override
+    protected void dropCustomDeathLoot(@NotNull ServerLevel pLevel, @NotNull DamageSource pDamageSource, boolean pRecentlyHit) {
+        super.dropCustomDeathLoot(pLevel, pDamageSource, pRecentlyHit);
+        for(ItemStack stack : this.inventory.getItems()){
+            this.spawnAtLocation(stack);
+        }
+    }
+
     public void scanForAnvils(){
-        //TODO: Search from center outwards to find the closest anvil
         if (this.currentAnvil == null || !(this.blockPosition().distSqr(this.currentAnvil) < 48) || !this.level().getBlockState(this.currentAnvil).is(BlockTags.ANVIL)) {
             this.currentAnvil = null;
+            double closestAnvilDist = Double.MAX_VALUE;
             for (int xRel = -24; xRel <= 24; xRel++) {
                 for (int yRel = -8; yRel <= 8; yRel++) {
                     for (int zRel = -24; zRel <= 24; zRel++) {
                         BlockPos checkPos = this.blockPosition().offset(xRel, yRel, zRel);
                         if (this.level().getBlockState(checkPos).is(BlockTags.ANVIL)) {
-                            this.currentAnvil = checkPos;
+                            double distSqr = this.blockPosition().distSqr(checkPos);
+                            if(distSqr < closestAnvilDist) {
+                                this.currentAnvil = checkPos;
+                                closestAnvilDist = distSqr;
+                            }
                         }
                     }
                 }
@@ -155,15 +184,19 @@ public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarr
     }
 
     public void scanForChests(){
-        //TODO: Search from center outwards to find the closest chest
         if (this.currentChest == null || !(this.blockPosition().distSqr(this.currentChest) < 48) || !this.level().getBlockState(this.currentChest).is(CHEST_BLOCK_TYPE)) {
             this.currentChest = null;
+            double closestChestDist = Double.MAX_VALUE;
             for (int xRel = -24; xRel <= 24; xRel++) {
                 for (int yRel = -8; yRel <= 8; yRel++) {
                     for (int zRel = -24; zRel <= 24; zRel++) {
                         BlockPos checkPos = this.blockPosition().offset(xRel, yRel, zRel);
                         if (this.level().getBlockState(checkPos).is(CHEST_BLOCK_TYPE)) {
-                            this.currentChest = checkPos;
+                            double distSqr = this.blockPosition().distSqr(checkPos);
+                            if(distSqr < closestChestDist) {
+                                this.currentChest = checkPos;
+                                closestChestDist = distSqr;
+                            }
                         }
                     }
                 }

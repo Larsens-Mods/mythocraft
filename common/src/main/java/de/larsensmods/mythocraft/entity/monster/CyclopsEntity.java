@@ -11,6 +11,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -92,6 +94,20 @@ public class CyclopsEntity extends Monster {
     public boolean doHurtTarget(@NotNull Entity pEntity) {
         this.attackAnimationTicks = 0;
         return super.doHurtTarget(pEntity);
+    }
+
+    @Override
+    public boolean isOnFire() {
+        return false;
+    }
+
+    @Override
+    public void handleDamageEvent(@NotNull DamageSource pDamageSource) {
+        //Prevent fire-related damages since cyclopses are immune to them
+        if(pDamageSource.is(DamageTypes.IN_FIRE) || pDamageSource.is(DamageTypes.ON_FIRE) || pDamageSource.is(DamageTypes.LAVA) || pDamageSource.is(DamageTypes.FIREBALL) || pDamageSource.is(DamageTypes.CAMPFIRE)){
+            return;
+        }
+        super.handleDamageEvent(pDamageSource);
     }
 
     //Utility methods
