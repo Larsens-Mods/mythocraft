@@ -1,0 +1,17 @@
+{
+  "name": "mythocraft:cyclops_cave/pen",
+  "elements": [
+    {
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "mythocraft:cyclops_sheep_pen",
+        "processors": {
+          "processors": []
+        },
+        "projection": "rigid"
+      },
+      "weight": 1
+    }
+  ],
+  "fallback": "minecraft:empty"
+}

@@ -49,6 +49,32 @@ public class MythStructures {
                 false,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES
         ));
+        structureBootstrapContext.register(MythocraftStructures.CYCLOPS_CAVE, new JigsawStructure(
+                new Structure.StructureSettings(
+                        biomeHolderGetter.getOrThrow(MythocraftBiomeTags.HAS_CYCLOPS_CAVE),
+                        Map.of(),
+                        GenerationStep.Decoration.SURFACE_STRUCTURES,
+                        TerrainAdjustment.NONE
+                ),
+                structureTemplatePoolHolderGetter.getOrThrow(MythocraftStructureTemplatePools.CYCLOPS_CAVE),
+                2,
+                ConstantHeight.of(VerticalAnchor.absolute(-2)),
+                false,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES
+        ));
+        structureBootstrapContext.register(MythocraftStructures.CYCLOPS_FORGE, new JigsawStructure(
+                new Structure.StructureSettings(
+                        biomeHolderGetter.getOrThrow(MythocraftBiomeTags.HAS_CYCLOPS_FORGE),
+                        Map.of(),
+                        GenerationStep.Decoration.SURFACE_STRUCTURES,
+                        TerrainAdjustment.NONE
+                ),
+                structureTemplatePoolHolderGetter.getOrThrow(MythocraftStructureTemplatePools.CYCLOPS_FORGE),
+                1,
+                ConstantHeight.of(VerticalAnchor.absolute(-2)),
+                false,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES
+        ));
     }
 
 }

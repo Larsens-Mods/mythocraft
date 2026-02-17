@@ -26,6 +26,8 @@ public class MythocraftItemModelProvider extends ItemModelProvider {
         withExistingParent(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(MythItems.SATYR_SPAWN_EGG.get())).getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(MythItems.PEGASUS_SPAWN_EGG.get())).getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(MythItems.NEMEAN_LION_SPAWN_EGG.get())).getPath(), mcLoc("item/template_spawn_egg"));
+        withExistingParent(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(MythItems.CYCLOPS_SPAWN_EGG.get())).getPath(), mcLoc("item/template_spawn_egg"));
+        withExistingParent(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(MythItems.BLACKSMITH_CYCLOPS_SPAWN_EGG.get())).getPath(), mcLoc("item/template_spawn_egg"));
     }
 
 }

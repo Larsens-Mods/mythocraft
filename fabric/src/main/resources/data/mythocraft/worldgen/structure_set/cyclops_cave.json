@@ -1,0 +1,14 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 24976475,
+    "separation": 15,
+    "spacing": 32
+  },
+  "structures": [
+    {
+      "structure": "mythocraft:cyclops_cave",
+      "weight": 1
+    }
+  ]
+}

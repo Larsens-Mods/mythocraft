@@ -27,7 +27,7 @@ public class NemeanLionEntity extends Monster {
 
     public NemeanLionEntity(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
-        this.xpReward = 10;
+        this.xpReward = XP_REWARD_LARGE;
     }
 
     @Override

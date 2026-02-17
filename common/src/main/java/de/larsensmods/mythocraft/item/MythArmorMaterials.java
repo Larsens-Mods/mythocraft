@@ -50,7 +50,7 @@ public class MythArmorMaterials {
                 }),
                 25,
                 SoundEvents.ARMOR_EQUIP_IRON,
-                () -> Ingredient.of(Items.IRON_BLOCK),
+                () -> Ingredient.of(MythItems.HADES_HELM.get()),
                 List.of(
                         new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "hades"))
                 ),

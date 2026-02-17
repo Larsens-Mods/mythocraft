@@ -1,7 +1,6 @@
 package de.larsensmods.mythocraft.client.mixincore;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.larsensmods.mythocraft.MythConfigValues;

@@ -1,8 +1,10 @@
 package de.larsensmods.mythocraft.data.loot;
 
 import de.larsensmods.mythocraft.entity.MythEntities;
+import de.larsensmods.mythocraft.entity.friendly.BlacksmithCyclopsEntity;
 import de.larsensmods.mythocraft.entity.friendly.PegasusEntity;
 import de.larsensmods.mythocraft.entity.friendly.SatyrEntity;
+import de.larsensmods.mythocraft.entity.monster.CyclopsEntity;
 import de.larsensmods.mythocraft.entity.monster.NemeanLionEntity;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.EntityLootSubProvider;
@@ -29,5 +31,7 @@ public class MythocraftEntityLootProvider extends EntityLootSubProvider {
         add(MythEntities.NEMEAN_LION.get(), NemeanLionEntity.getLootTableBuilder());
         add(MythEntities.PEGASUS.get(), PegasusEntity.getLootTableBuilder());
         add(MythEntities.SATYR.get(), SatyrEntity.getLootTableBuilder());
+        add(MythEntities.CYCLOPS.get(), CyclopsEntity.getLootTableBuilder());
+        add(MythEntities.BLACKSMITH_CYCLOPS.get(), BlacksmithCyclopsEntity.getLootTableBuilder());
     }
 }
