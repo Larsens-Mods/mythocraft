@@ -37,20 +37,42 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarrier {
 
     private static final Block CHEST_BLOCK_TYPE = Blocks.TRAPPED_CHEST;
-    private static final Function<Item, Boolean> PICKUP_VALIDATOR = (item) -> {
+    private static final Function<List<ItemStack>, List<ItemStack>> PICKUP_VALIDATOR = (item) -> {
         for(BlacksmithCyclopsRecipe recipe : BlacksmithCyclopsRecipe.RECIPES){
-            if(recipe.ingredients().containsKey(item)){
-                return true;
+            List<ItemStack> recipeStacks = new ArrayList<>();
+            for(ItemStack stack : item){
+                if(recipe.ingredients().containsKey(stack.getItem())) {
+                    if (stack.getCount() >= recipe.ingredients().get(stack.getItem())) {
+                        recipeStacks.add(stack.copyWithCount(recipe.ingredients().get(stack.getItem())));
+                    }else{
+                        recipeStacks.clear();
+                        break;
+                    }
+                }
+            }
+            if(!recipeStacks.isEmpty()){
+                return recipeStacks;
             }
         }
-        return false;
+        return List.of();
     };
-    private static final Function<Item, Boolean> PUT_DOWN_VALIDATOR = (item) -> !PICKUP_VALIDATOR.apply(item) && !item.equals(Items.AIR);
+    private static final Function<Item, Boolean> PUT_DOWN_VALIDATOR = (item) -> {
+        boolean isIngredient = false;
+        for(BlacksmithCyclopsRecipe recipe : BlacksmithCyclopsRecipe.RECIPES){
+            if (recipe.ingredients().containsKey(item)) {
+                isIngredient = true;
+                break;
+            }
+        }
+        return !isIngredient && !item.equals(Items.AIR);
+    };
 
     private final SimpleContainer inventory = new SimpleContainer(4);
 

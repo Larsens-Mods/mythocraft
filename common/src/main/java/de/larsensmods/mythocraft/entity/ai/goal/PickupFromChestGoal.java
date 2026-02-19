@@ -5,13 +5,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.npc.InventoryCarrier;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -20,9 +21,9 @@ public class PickupFromChestGoal extends Goal {
     private final PathfinderMob mob;
     private final InventoryCarrier carrier;
     private final Supplier<BlockPos> chestPosSupplier;
-    private final Function<Item, Boolean> pickupValidator;
+    private final Function<List<ItemStack>, List<ItemStack>> pickupValidator;
 
-    public PickupFromChestGoal(PathfinderMob mob, InventoryCarrier carrier, Supplier<BlockPos> chestPosSupplier, Function<Item, Boolean> pickupValidator) {
+    public PickupFromChestGoal(PathfinderMob mob, InventoryCarrier carrier, Supplier<BlockPos> chestPosSupplier, Function<List<ItemStack>, List<ItemStack>> pickupValidator) {
         this.mob = mob;
         this.carrier = carrier;
         this.chestPosSupplier = chestPosSupplier;
@@ -48,10 +49,12 @@ public class PickupFromChestGoal extends Goal {
         if(!(rawEntity instanceof ChestBlockEntity chestEntity)){
             return false;
         }
+        List<ItemStack> stacks = new ArrayList<>();
         for(int i = 0; i < chestEntity.getContainerSize(); i++){
-            if(pickupValidator.apply(chestEntity.getItem(i).getItem())){
-                return inventoryNotFull;
-            }
+            stacks.add(chestEntity.getItem(i));
+        }
+        if(!pickupValidator.apply(stacks).isEmpty()){
+            return inventoryNotFull;
         }
         return false;
     }
@@ -66,11 +69,15 @@ public class PickupFromChestGoal extends Goal {
             }
             BlockEntity rawEntity = mob.level().getBlockEntity(chestPos);
             if(rawEntity instanceof ChestBlockEntity chestEntity){
+                List<ItemStack> stacks = new ArrayList<>();
                 for(int i = 0; i < chestEntity.getContainerSize(); i++){
-                    ItemStack item = chestEntity.getItem(i);
-                    if (pickupValidator.apply(item.getItem()) && this.carrier.getInventory().canAddItem(item)) {
-                        ItemStack removed = chestEntity.removeItem(i, item.getCount());
-                        this.carrier.getInventory().addItem(removed);
+                    stacks.add(chestEntity.getItem(i));
+                }
+                List<ItemStack> pickupStacks = pickupValidator.apply(stacks);
+                for(ItemStack stack : pickupStacks){
+                    if(this.carrier.getInventory().canAddItem(stack)){
+                        this.removeStack(stack.copy(), chestEntity);
+                        this.carrier.getInventory().addItem(stack);
                     }
                 }
             }
@@ -88,5 +95,19 @@ public class PickupFromChestGoal extends Goal {
     @Override
     public void stop() {
         this.mob.getNavigation().stop();
+    }
+
+    private void removeStack(ItemStack toRemove, ChestBlockEntity chestEntity){
+        for(int i = 0; i < chestEntity.getContainerSize(); i++){
+            ItemStack item = chestEntity.getItem(i);
+            if(item.getItem() == toRemove.getItem()){
+                int removeCount = Math.min(item.getCount(), toRemove.getCount());
+                item.shrink(removeCount);
+                toRemove.shrink(removeCount);
+                if(toRemove.isEmpty()){
+                    return;
+                }
+            }
+        }
     }
 }
