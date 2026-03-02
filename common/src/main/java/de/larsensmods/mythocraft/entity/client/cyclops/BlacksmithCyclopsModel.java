@@ -60,7 +60,7 @@ public class BlacksmithCyclopsModel<T extends BlacksmithCyclopsEntity> extends H
         this.animateWalk(BlacksmithCyclopsAnimations.WALK, limbSwing, limbSwingAmount, 2f, 2.5f);
         this.animate(entity.idleAnimationState, BlacksmithCyclopsAnimations.IDLE, ageInTicks, 1f);
         this.animate(entity.attackAnimationState, BlacksmithCyclopsAnimations.ATTACK, ageInTicks, 1f);
-        this.animate(entity.smithingAnimationState, BlacksmithCyclopsAnimations.SMITHING, ageInTicks, 1f);
+        this.animate(entity.smithingAnimationState, BlacksmithCyclopsAnimations.SMITHING, ageInTicks, 1.375f);
     }
 
     private void applyHeadRotation(float headYaw, float headPitch) {

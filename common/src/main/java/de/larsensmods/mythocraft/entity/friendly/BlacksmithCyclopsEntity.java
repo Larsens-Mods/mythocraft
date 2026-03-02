@@ -7,6 +7,9 @@ import de.larsensmods.mythocraft.entity.ai.goal.PickupFromChestGoal;
 import de.larsensmods.mythocraft.entity.ai.goal.PutIntoChestGoal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.SimpleContainer;
@@ -73,13 +76,13 @@ public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarr
         }
         return !isIngredient && !item.equals(Items.AIR);
     };
+    private static final EntityDataAccessor<Integer> CRAFTING_TICKS = SynchedEntityData.defineId(BlacksmithCyclopsEntity.class, EntityDataSerializers.INT);
 
     private final SimpleContainer inventory = new SimpleContainer(4);
 
     private BlockPos currentAnvil = null;
     private BlockPos currentChest = null;
 
-    private int craftingFinishTick = 0;
     private Runnable craftingFinished = null;
 
     public final AnimationState idleAnimationState = new AnimationState();
@@ -92,6 +95,12 @@ public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarr
 
     public BlacksmithCyclopsEntity(EntityType<? extends AgeableMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(CRAFTING_TICKS, -1);
     }
 
     @Override
@@ -114,7 +123,7 @@ public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarr
                 this.scanForAnvils();
                 this.scanForChests();
             }
-            if(this.craftingFinished != null && this.craftingFinishTick <= this.tickCount){
+            if(this.craftingFinished != null && this.getCraftingFinishTick() <= this.tickCount){
                 this.craftingFinished.run();
                 this.craftingFinished = null;
             }
@@ -128,9 +137,9 @@ public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarr
         }else{
             this.idleAnimationTimeout--;
         }
-        if(this.craftingFinishTick > this.tickCount){
+        if(this.getCraftingFinishTick() > this.tickCount){
             if(this.smithingAnimationTimeout <= 0){
-                this.smithingAnimationTimeout = 55;
+                this.smithingAnimationTimeout = 40;
                 this.smithingAnimationState.start(this.tickCount);
             }else{
                 this.smithingAnimationTimeout--;
@@ -231,11 +240,19 @@ public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarr
             Constants.LOG.error("Tried to start crafting with BlacksmithCyclopsEntity.startCrafting without having the required items.");
             return;
         }
-        this.craftingFinishTick = this.tickCount + recipe.craftingTicks();
+        this.setCraftingFinishTick(this.tickCount + recipe.craftingTicks());
         this.craftingFinished = () -> {
             recipe.changeItems(this);
             onCraftComplete.run();
         };
+    }
+
+    private void setCraftingFinishTick(int craftingFinishTick){
+        this.entityData.set(CRAFTING_TICKS, craftingFinishTick);
+    }
+
+    private int getCraftingFinishTick() {
+        return this.entityData.get(CRAFTING_TICKS);
     }
 
     //Utility methods

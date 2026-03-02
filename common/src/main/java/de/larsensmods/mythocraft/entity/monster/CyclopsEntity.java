@@ -9,6 +9,9 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -40,15 +43,23 @@ import java.util.Optional;
 
 public class CyclopsEntity extends Monster {
 
+    private static final EntityDataAccessor<Integer> ATTACK_ANIM_TICKS = SynchedEntityData.defineId(CyclopsEntity.class, EntityDataSerializers.INT);
+
     public final AnimationState idleAnimationState = new AnimationState();
     public final AnimationState attackAnimationState = new AnimationState();
     public final AnimationState rockThrowAnimationState = new AnimationState();
     private int idleAnimationTimeout = 0;
-    private int attackAnimationTicks = -1;
+    private boolean animationStartedInCycle = false;
 
     public CyclopsEntity(EntityType<? extends Monster> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         this.xpReward = XP_REWARD_LARGE;
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(ATTACK_ANIM_TICKS, -1);
     }
 
     @Override
@@ -69,6 +80,11 @@ public class CyclopsEntity extends Monster {
         super.tick();
         if(this.level().isClientSide()){
             this.setupAnimStates();
+        }else{
+            int attackAnimTicks = this.getAttackAnimTicks();
+            if(attackAnimTicks >= 0){
+                this.setAttackAnimTicks(attackAnimTicks - 1);
+            }
         }
     }
 
@@ -79,20 +95,23 @@ public class CyclopsEntity extends Monster {
         }else{
             this.idleAnimationTimeout--;
         }
-        if(this.attackAnimationTicks == 0){
-            this.attackAnimationState.start(30);
-            this.attackAnimationTicks++;
-        }else if(this.attackAnimationTicks > 0){
-            this.attackAnimationTicks++;
-            if(this.attackAnimationTicks > 30){
-                this.attackAnimationTicks = -1;
+        int attackAnimTicks = this.getAttackAnimTicks();
+        if(attackAnimTicks >= 15 && !this.animationStartedInCycle){
+            this.attackAnimationState.start(this.tickCount);
+            this.animationStartedInCycle = true;
+        }else if(attackAnimTicks >= 0){
+            if(attackAnimTicks < 15) {
+                this.animationStartedInCycle = false;
+            }
+            if(attackAnimTicks == 0){
+                this.attackAnimationState.stop();
             }
         }
     }
 
     @Override
     public boolean doHurtTarget(@NotNull Entity pEntity) {
-        this.attackAnimationTicks = 0;
+        this.setAttackAnimTicks(20);
         return super.doHurtTarget(pEntity);
     }
 
@@ -108,6 +127,14 @@ public class CyclopsEntity extends Monster {
             return;
         }
         super.handleDamageEvent(pDamageSource);
+    }
+
+    private void setAttackAnimTicks(int attackAnimTicks){
+        this.entityData.set(ATTACK_ANIM_TICKS, attackAnimTicks);
+    }
+
+    private int getAttackAnimTicks() {
+        return this.entityData.get(ATTACK_ANIM_TICKS);
     }
 
     //Utility methods

@@ -58,7 +58,7 @@ public class CyclopsModel<T extends CyclopsEntity> extends HierarchicalModel<T> 
 
         this.animateWalk(CyclopsAnimations.WALK, limbSwing, limbSwingAmount, 2f, 2.5f);
         this.animate(entity.idleAnimationState, CyclopsAnimations.IDLE, ageInTicks, 1f);
-        this.animate(entity.attackAnimationState, CyclopsAnimations.ATTACK, ageInTicks, 1f);
+        this.animate(entity.attackAnimationState, CyclopsAnimations.ATTACK, ageInTicks, 1.5f);
         this.animate(entity.rockThrowAnimationState, CyclopsAnimations.ROCK_THROW, ageInTicks, 1f);
     }
 
