@@ -1,6 +1,7 @@
 package de.larsensmods.mythocraft.entity.ai.goal;
 
 import de.larsensmods.mythocraft.data.MythocraftBlockTags;
+import de.larsensmods.mythocraft.util.ChestUtilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -53,6 +54,12 @@ public class PickupFromChestGoal extends Goal {
         for(int i = 0; i < chestEntity.getContainerSize(); i++){
             stacks.add(chestEntity.getItem(i));
         }
+        ChestBlockEntity otherHalf = ChestUtilities.getOtherHalf(chestEntity);
+        if(otherHalf != null){
+            for (int i = 0; i < otherHalf.getContainerSize(); i++) {
+                stacks.add(otherHalf.getItem(i));
+            }
+        }
         if(!pickupValidator.apply(stacks).isEmpty()){
             return inventoryNotFull;
         }
@@ -73,10 +80,16 @@ public class PickupFromChestGoal extends Goal {
                 for(int i = 0; i < chestEntity.getContainerSize(); i++){
                     stacks.add(chestEntity.getItem(i));
                 }
+                ChestBlockEntity otherHalf = ChestUtilities.getOtherHalf(chestEntity);
+                if(otherHalf != null){
+                    for (int i = 0; i < otherHalf.getContainerSize(); i++) {
+                        stacks.add(otherHalf.getItem(i));
+                    }
+                }
                 List<ItemStack> pickupStacks = pickupValidator.apply(stacks);
                 for(ItemStack stack : pickupStacks){
                     if(this.carrier.getInventory().canAddItem(stack)){
-                        this.removeStack(stack.copy(), chestEntity);
+                        this.removeStack(stack.copy(), chestEntity, otherHalf);
                         this.carrier.getInventory().addItem(stack);
                     }
                 }
@@ -97,15 +110,19 @@ public class PickupFromChestGoal extends Goal {
         this.mob.getNavigation().stop();
     }
 
-    private void removeStack(ItemStack toRemove, ChestBlockEntity chestEntity){
-        for(int i = 0; i < chestEntity.getContainerSize(); i++){
-            ItemStack item = chestEntity.getItem(i);
-            if(item.getItem() == toRemove.getItem()){
-                int removeCount = Math.min(item.getCount(), toRemove.getCount());
-                item.shrink(removeCount);
-                toRemove.shrink(removeCount);
-                if(toRemove.isEmpty()){
-                    return;
+    private void removeStack(ItemStack toRemove, ChestBlockEntity... chestEntities){
+        for(ChestBlockEntity chestEntity : chestEntities){
+            if(chestEntity != null){
+                for(int i = 0; i < chestEntity.getContainerSize(); i++){
+                    ItemStack item = chestEntity.getItem(i);
+                    if(item.getItem() == toRemove.getItem()){
+                        int removeCount = Math.min(item.getCount(), toRemove.getCount());
+                        item.shrink(removeCount);
+                        toRemove.shrink(removeCount);
+                        if(toRemove.isEmpty()){
+                            return;
+                        }
+                    }
                 }
             }
         }
