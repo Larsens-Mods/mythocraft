@@ -47,7 +47,7 @@ public class CyclopsAnimations {
             ))
             .build();
 
-    public static final AnimationDefinition ATTACK = AnimationDefinition.Builder.withLength(1.5F)
+    public static final AnimationDefinition ATTACK = AnimationDefinition.Builder.withLength(1.5F).looping()
             .addAnimation("body", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
                     new Keyframe(0.75F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -86,7 +86,7 @@ public class CyclopsAnimations {
             ))
             .build();
 
-    public static final AnimationDefinition ROCK_THROW = AnimationDefinition.Builder.withLength(2.0F)
+    public static final AnimationDefinition ROCK_THROW = AnimationDefinition.Builder.withLength(2.0F).looping()
             .addAnimation("body", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
                     new Keyframe(1.0F, KeyframeAnimations.degreeVec(-5.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),

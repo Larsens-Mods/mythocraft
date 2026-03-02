@@ -1,6 +1,7 @@
 package de.larsensmods.mythocraft.entity.ai.goal;
 
 import de.larsensmods.mythocraft.data.MythocraftBlockTags;
+import de.larsensmods.mythocraft.util.ChestUtilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -41,11 +42,20 @@ public class PutIntoChestGoal extends Goal {
         if(!(rawEntity instanceof ChestBlockEntity chestEntity)){
             return false;
         }
+        ChestBlockEntity otherHalf = ChestUtilities.getOtherHalf(chestEntity);
         boolean hasSpaceInChest = false;
         for(int i = 0; i < chestEntity.getContainerSize(); i++){
             if(chestEntity.getItem(i).isEmpty()){
                 hasSpaceInChest = true;
                 break;
+            }
+        }
+        if(!hasSpaceInChest && otherHalf != null){
+            for(int i = 0; i < otherHalf.getContainerSize(); i++){
+                if(otherHalf.getItem(i).isEmpty()){
+                    hasSpaceInChest = true;
+                    break;
+                }
             }
         }
         if(hasSpaceInChest){
@@ -68,13 +78,7 @@ public class PutIntoChestGoal extends Goal {
             }
             BlockEntity rawEntity = mob.level().getBlockEntity(chestPos);
             if(rawEntity instanceof ChestBlockEntity chestEntity){
-                for(int i = 0; i < chestEntity.getContainerSize(); i++){
-                    ItemStack item = chestEntity.getItem(i);
-                    if (putDownValidator.apply(item.getItem()) && this.carrier.getInventory().canAddItem(item)) {
-                        ItemStack removed = chestEntity.removeItem(i, item.getCount());
-                        this.carrier.getInventory().addItem(removed);
-                    }
-                }
+                ChestBlockEntity otherHalf = ChestUtilities.getOtherHalf(chestEntity);
                 for(int i = 0; i < carrier.getInventory().getContainerSize(); i++){
                     ItemStack item = carrier.getInventory().getItem(i);
                     if(putDownValidator.apply(item.getItem())){
@@ -82,7 +86,16 @@ public class PutIntoChestGoal extends Goal {
                         for(int j = 0; j < chestEntity.getContainerSize(); j++){
                             if(chestEntity.getItem(j).isEmpty()){
                                 chestEntity.setItem(j, toInsert);
+                                toInsert = ItemStack.EMPTY;
                                 break;
+                            }
+                        }
+                        if(otherHalf != null && !toInsert.isEmpty()){
+                            for(int j = 0; j < otherHalf.getContainerSize(); j++){
+                                if(otherHalf.getItem(j).isEmpty()){
+                                    otherHalf.setItem(j, toInsert);
+                                    break;
+                                }
                             }
                         }
                     }

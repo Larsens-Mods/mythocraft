@@ -7,6 +7,9 @@ import de.larsensmods.mythocraft.entity.ai.goal.PickupFromChestGoal;
 import de.larsensmods.mythocraft.entity.ai.goal.PutIntoChestGoal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.SimpleContainer;
@@ -37,27 +40,49 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarrier {
 
     private static final Block CHEST_BLOCK_TYPE = Blocks.TRAPPED_CHEST;
-    private static final Function<Item, Boolean> PICKUP_VALIDATOR = (item) -> {
+    private static final Function<List<ItemStack>, List<ItemStack>> PICKUP_VALIDATOR = (item) -> {
         for(BlacksmithCyclopsRecipe recipe : BlacksmithCyclopsRecipe.RECIPES){
-            if(recipe.ingredients().containsKey(item)){
-                return true;
+            List<ItemStack> recipeStacks = new ArrayList<>();
+            for(ItemStack stack : item){
+                if(recipe.ingredients().containsKey(stack.getItem())) {
+                    if (stack.getCount() >= recipe.ingredients().get(stack.getItem())) {
+                        recipeStacks.add(stack.copyWithCount(recipe.ingredients().get(stack.getItem())));
+                    }else{
+                        recipeStacks.clear();
+                        break;
+                    }
+                }
+            }
+            if(!recipeStacks.isEmpty()){
+                return recipeStacks;
             }
         }
-        return false;
+        return List.of();
     };
-    private static final Function<Item, Boolean> PUT_DOWN_VALIDATOR = (item) -> !PICKUP_VALIDATOR.apply(item) && !item.equals(Items.AIR);
+    private static final Function<Item, Boolean> PUT_DOWN_VALIDATOR = (item) -> {
+        boolean isIngredient = false;
+        for(BlacksmithCyclopsRecipe recipe : BlacksmithCyclopsRecipe.RECIPES){
+            if (recipe.ingredients().containsKey(item)) {
+                isIngredient = true;
+                break;
+            }
+        }
+        return !isIngredient && !item.equals(Items.AIR);
+    };
+    private static final EntityDataAccessor<Integer> CRAFTING_TICKS = SynchedEntityData.defineId(BlacksmithCyclopsEntity.class, EntityDataSerializers.INT);
 
     private final SimpleContainer inventory = new SimpleContainer(4);
 
     private BlockPos currentAnvil = null;
     private BlockPos currentChest = null;
 
-    private int craftingFinishTick = 0;
     private Runnable craftingFinished = null;
 
     public final AnimationState idleAnimationState = new AnimationState();
@@ -70,6 +95,12 @@ public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarr
 
     public BlacksmithCyclopsEntity(EntityType<? extends AgeableMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(CRAFTING_TICKS, -1);
     }
 
     @Override
@@ -92,7 +123,7 @@ public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarr
                 this.scanForAnvils();
                 this.scanForChests();
             }
-            if(this.craftingFinished != null && this.craftingFinishTick <= this.tickCount){
+            if(this.craftingFinished != null && this.getCraftingFinishTick() <= this.tickCount){
                 this.craftingFinished.run();
                 this.craftingFinished = null;
             }
@@ -106,9 +137,9 @@ public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarr
         }else{
             this.idleAnimationTimeout--;
         }
-        if(this.craftingFinishTick > this.tickCount){
+        if(this.getCraftingFinishTick() > this.tickCount){
             if(this.smithingAnimationTimeout <= 0){
-                this.smithingAnimationTimeout = 55;
+                this.smithingAnimationTimeout = 40;
                 this.smithingAnimationState.start(this.tickCount);
             }else{
                 this.smithingAnimationTimeout--;
@@ -209,11 +240,19 @@ public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarr
             Constants.LOG.error("Tried to start crafting with BlacksmithCyclopsEntity.startCrafting without having the required items.");
             return;
         }
-        this.craftingFinishTick = this.tickCount + recipe.craftingTicks();
+        this.setCraftingFinishTick(this.tickCount + recipe.craftingTicks());
         this.craftingFinished = () -> {
             recipe.changeItems(this);
             onCraftComplete.run();
         };
+    }
+
+    private void setCraftingFinishTick(int craftingFinishTick){
+        this.entityData.set(CRAFTING_TICKS, craftingFinishTick);
+    }
+
+    private int getCraftingFinishTick() {
+        return this.entityData.get(CRAFTING_TICKS);
     }
 
     //Utility methods
