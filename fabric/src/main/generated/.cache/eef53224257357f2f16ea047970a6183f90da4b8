@@ -1,5 +1,5 @@
-// 1.21	2026-03-02T18:27:10.6969693	Mythocraft/Tags for minecraft:worldgen/biome
-bc5c7ea2ab6aca70d3d7c8e769df7479fc18a9e8 data\mythocraft\tags\worldgen\biome\has_cyclops_cave.json
-70d7932f023d4b3cdda90ef8f613754a6e48bede data\mythocraft\tags\worldgen\biome\has_greek_temple.json
-db8e6ef3f8db7d754f34d65cd8d57fa063f6203a data\mythocraft\tags\worldgen\biome\spawns_pegasus.json
-cf5cf55ab1f5c1d46e33fb4ade61a7f3b790d339 data\mythocraft\tags\worldgen\biome\has_cyclops_forge.json
+// 1.20.1	2026-03-05T16:45:56.63937	Mythocraft/Tags for minecraft:worldgen/biome
+4abaf1019a5e7796e42d59959d81519c01da53de data\mythocraft\tags\worldgen\biome\has_cyclops_cave.json
+379dcfaf4af55b6602a35923cf627a2230c8c76e data\mythocraft\tags\worldgen\biome\has_cyclops_forge.json
+6ff1b3da0fa9386f0cbd4f714ca7e82af38897fe data\mythocraft\tags\worldgen\biome\spawns_pegasus.json
+5e672570af97ad81b19cac6606341216afdf7c99 data\mythocraft\tags\worldgen\biome\has_greek_temple.json

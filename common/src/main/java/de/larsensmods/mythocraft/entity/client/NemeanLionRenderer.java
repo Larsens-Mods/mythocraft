@@ -15,6 +15,6 @@ public class NemeanLionRenderer extends MobRenderer<NemeanLionEntity, NemeanLion
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull NemeanLionEntity nemeanLionEntity) {
-        return ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/nemean_lion.png");
+        return new ResourceLocation(Constants.MOD_ID, "textures/entity/nemean_lion.png");
     }
 }

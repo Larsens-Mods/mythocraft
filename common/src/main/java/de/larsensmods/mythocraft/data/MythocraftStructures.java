@@ -8,8 +8,8 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 
 public class MythocraftStructures {
 
-    public static ResourceKey<Structure> GREEK_TEMPLE = ResourceKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "greek_temple"));
-    public static ResourceKey<Structure> CYCLOPS_CAVE = ResourceKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "cyclops_cave"));
-    public static ResourceKey<Structure> CYCLOPS_FORGE = ResourceKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "cyclops_forge"));
+    public static ResourceKey<Structure> GREEK_TEMPLE = ResourceKey.create(Registries.STRUCTURE, new ResourceLocation(Constants.MOD_ID, "greek_temple"));
+    public static ResourceKey<Structure> CYCLOPS_CAVE = ResourceKey.create(Registries.STRUCTURE, new ResourceLocation(Constants.MOD_ID, "cyclops_cave"));
+    public static ResourceKey<Structure> CYCLOPS_FORGE = ResourceKey.create(Registries.STRUCTURE, new ResourceLocation(Constants.MOD_ID, "cyclops_forge"));
 
 }

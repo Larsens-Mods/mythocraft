@@ -7,22 +7,20 @@ import de.larsensmods.mythocraft.entity.monster.CyclopsEntity;
 import de.larsensmods.mythocraft.entity.monster.NemeanLionEntity;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.SimpleFabricLootTableProvider;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 public class MythocraftEntityLootProvider extends SimpleFabricLootTableProvider {
 
-    public MythocraftEntityLootProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
-        super(output, registryLookup, LootContextParamSets.ENTITY);
+    public MythocraftEntityLootProvider(FabricDataOutput output) {
+        super(output, LootContextParamSets.ENTITY);
     }
 
     @Override
-    public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {
+    public void generate(BiConsumer<ResourceLocation, LootTable.Builder> output) {
         output.accept(MythocraftLootTables.NEMEAN_LION_LOOT, NemeanLionEntity.getLootTableBuilder());
         output.accept(MythocraftLootTables.PEGASUS_LOOT, PegasusEntity.getLootTableBuilder());
         output.accept(MythocraftLootTables.CYCLOPS_LOOT, CyclopsEntity.getLootTableBuilder());

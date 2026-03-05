@@ -15,6 +15,6 @@ public class CyclopsRenderer extends MobRenderer<CyclopsEntity, CyclopsModel<Cyc
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull CyclopsEntity cyclopsEntity) {
-        return ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/cyclops/cyclops.png");
+        return new ResourceLocation(Constants.MOD_ID, "textures/entity/cyclops/cyclops.png");
     }
 }

@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CyclopsModel<T extends CyclopsEntity> extends HierarchicalModel<T> {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "cyclops"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "cyclops"), "main");
     private final ModelPart body;
     private final ModelPart head;
     private final ModelPart right_arm;
@@ -71,8 +71,8 @@ public class CyclopsModel<T extends CyclopsEntity> extends HierarchicalModel<T> 
     }
 
     @Override
-    public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-        body.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+    public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+        body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
     @Override

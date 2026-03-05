@@ -15,9 +15,9 @@ import java.util.concurrent.CompletableFuture;
 public class MythocraftDatapackEntries extends DatapackBuiltinEntriesProvider {
 
     public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
-            .add(Registries.CONFIGURED_FEATURE, MythocraftConfiguredFeatures::bootstrap)
-            .add(Registries.PLACED_FEATURE, MythocraftPlacedFeatures::bootstrap)
-            .add(ForgeRegistries.Keys.BIOME_MODIFIERS, MythocraftBiomeModifiers::bootstrap)
+            .add(Registries.CONFIGURED_FEATURE, MythConfiguredFeatures::bootstrap)
+            .add(Registries.PLACED_FEATURE, MythPlacedFeatures::bootstrap)
+            .add(ForgeRegistries.Keys.BIOME_MODIFIERS, MythBiomeModifiers::bootstrap)
             .add(Registries.STRUCTURE, MythStructures::bootstrap)
             .add(Registries.TEMPLATE_POOL, MythStructureTemplatePools::bootstrap)
             .add(Registries.STRUCTURE_SET, MythStructureSets::bootstrap);

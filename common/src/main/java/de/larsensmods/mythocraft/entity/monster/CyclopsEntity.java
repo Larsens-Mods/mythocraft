@@ -57,9 +57,9 @@ public class CyclopsEntity extends Monster {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
-        super.defineSynchedData(pBuilder);
-        pBuilder.define(ATTACK_ANIM_TICKS, -1);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(ATTACK_ANIM_TICKS, -1);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class CyclopsEntity extends Monster {
     @Override
     public void handleDamageEvent(@NotNull DamageSource pDamageSource) {
         //Prevent fire-related damages since cyclopses are immune to them
-        if(pDamageSource.is(DamageTypes.IN_FIRE) || pDamageSource.is(DamageTypes.ON_FIRE) || pDamageSource.is(DamageTypes.LAVA) || pDamageSource.is(DamageTypes.FIREBALL) || pDamageSource.is(DamageTypes.CAMPFIRE)){
+        if(pDamageSource.is(DamageTypes.IN_FIRE) || pDamageSource.is(DamageTypes.ON_FIRE) || pDamageSource.is(DamageTypes.LAVA) || pDamageSource.is(DamageTypes.FIREBALL)){
             return;
         }
         super.handleDamageEvent(pDamageSource);
@@ -144,6 +144,7 @@ public class CyclopsEntity extends Monster {
                 .add(Attributes.MAX_HEALTH, 50.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.25)
                 .add(Attributes.ATTACK_DAMAGE, 8)
+                .add(Attributes.ATTACK_KNOCKBACK, 2)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.75)
                 .add(Attributes.ARMOR_TOUGHNESS, 2.0)
                 .add(Attributes.ARMOR, 2.0)

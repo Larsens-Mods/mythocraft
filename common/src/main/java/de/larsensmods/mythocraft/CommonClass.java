@@ -13,8 +13,7 @@ import de.larsensmods.mythocraft.item.MythCreativeTabs;
 import de.larsensmods.mythocraft.item.MythItems;
 import de.larsensmods.mythocraft.platform.Services;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.entity.SpawnPlacementTypes;
-import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.levelgen.Heightmap;
 
@@ -33,7 +32,6 @@ public class CommonClass {
         }
 
         MythEntities.registerEntityTypes();
-        MythArmorMaterials.registerArmorMaterials();
         MythItems.registerItems();
         MythCreativeTabs.registerCreativeTabs();
 
@@ -50,10 +48,10 @@ public class CommonClass {
     }
 
     private static void registerSpawnPlacements(){
-        SpawnPlacementsRegistry.register(MythEntities.SATYR, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SatyrEntity::checkSatyrSpawnRules);
-        SpawnPlacementsRegistry.register(MythEntities.PEGASUS, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, PegasusEntity::checkPegasusSpawnRules);
-        SpawnPlacementsRegistry.register(MythEntities.NEMEAN_LION, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NemeanLionEntity::checkAnyLightMonsterSpawnRules);
-        SpawnPlacementsRegistry.register(MythEntities.CYCLOPS, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CyclopsEntity::checkAnyLightMonsterSpawnRules);
-        SpawnPlacementsRegistry.register(MythEntities.BLACKSMITH_CYCLOPS, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlacksmithCyclopsEntity::checkMobSpawnRules);
+        SpawnPlacementsRegistry.register(MythEntities.SATYR, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SatyrEntity::checkSatyrSpawnRules);
+        SpawnPlacementsRegistry.register(MythEntities.PEGASUS, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, PegasusEntity::checkPegasusSpawnRules);
+        SpawnPlacementsRegistry.register(MythEntities.NEMEAN_LION, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NemeanLionEntity::checkAnyLightMonsterSpawnRules);
+        SpawnPlacementsRegistry.register(MythEntities.CYCLOPS, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CyclopsEntity::checkAnyLightMonsterSpawnRules);
+        SpawnPlacementsRegistry.register(MythEntities.BLACKSMITH_CYCLOPS, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlacksmithCyclopsEntity::checkMobSpawnRules);
     }
 }

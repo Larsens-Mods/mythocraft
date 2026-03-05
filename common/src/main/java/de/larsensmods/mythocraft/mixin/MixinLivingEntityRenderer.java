@@ -19,18 +19,16 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(LivingEntityRenderer.class)
 public class MixinLivingEntityRenderer<T extends LivingEntity, M extends EntityModel<T>> {
 
-    @Redirect(method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/EntityModel;renderToBuffer(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V"))
-    private void renderToBufferRedirector(EntityModel<T> model, PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color, @Local(argsOnly = true) T pEntity){
-        if(!(model instanceof PlayerModel<T>) || !(pEntity instanceof Player player) || !(player.getInventory().getArmor(Inventory.HELMET_SLOT_ONLY[0]).is(MythItems.HADES_HELM.get()))){
-            model.renderToBuffer(poseStack, buffer, packedLight, packedOverlay, color);
+    @Redirect(method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/EntityModel;renderToBuffer(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;IIFFFF)V"))
+    private void mythocraft$renderToBufferRedirect(EntityModel<T> instance, PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, @Local(argsOnly = true) T pEntity){
+        if(!(instance instanceof PlayerModel<T>) || !(pEntity instanceof Player player) || !(player.getInventory().getArmor(Inventory.HELMET_SLOT_ONLY[0]).is(MythItems.HADES_HELM.get()))){
+            instance.renderToBuffer(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             return;
         }
         if(!Minecraft.getInstance().options.getCameraType().isFirstPerson() && player.is(Minecraft.getInstance().player)){
-            int alpha = (int) (255 * MythConfigValues.HADES_HELM_RENDER_TRANSPARENCY);
-            int shiftedColor = (color & 0xFFFFFF) | (alpha << 24);
-            model.renderToBuffer(poseStack, buffer, packedLight, packedOverlay, shiftedColor);
+            instance.renderToBuffer(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha * MythConfigValues.HADES_HELM_RENDER_TRANSPARENCY);
         }else{
-            model.renderToBuffer(poseStack, buffer, packedLight, packedOverlay, color);
+            instance.renderToBuffer(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         }
     }
 

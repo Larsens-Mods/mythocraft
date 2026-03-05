@@ -16,7 +16,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -36,6 +35,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.DismountHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -72,6 +72,8 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
     private static final EntityDataAccessor<Integer> LAST_GLIDING_CALC = SynchedEntityData.defineId(PegasusEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> LAST_GLIDING_VELOCITY = SynchedEntityData.defineId(PegasusEntity.class, EntityDataSerializers.FLOAT);
 
+    private static final Ingredient PEGASUS_FOOD = Ingredient.of(Items.WHEAT, Items.SUGAR, Blocks.HAY_BLOCK.asItem(), Items.APPLE, Items.GOLDEN_CARROT, Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE);
+
     public final AnimationState idleAnimationState = new AnimationState();
     public final AnimationState grassingAnimationState = new AnimationState();
     public final AnimationState rearingAnimationState = new AnimationState();
@@ -98,12 +100,12 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
-        super.defineSynchedData(pBuilder);
-        pBuilder.define(VARIANT, 0);
-        pBuilder.define(FLAGS, (byte) 0);
-        pBuilder.define(LAST_GLIDING_CALC, 0);
-        pBuilder.define(LAST_GLIDING_VELOCITY, Float.NEGATIVE_INFINITY);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(VARIANT, 0);
+        this.entityData.define(FLAGS, (byte) 0);
+        this.entityData.define(LAST_GLIDING_CALC, 0);
+        this.entityData.define(LAST_GLIDING_VELOCITY, Float.NEGATIVE_INFINITY);
     }
 
     @Override
@@ -173,7 +175,7 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
         this.goalSelector.addGoal(1, new PegasusRunAroundLikeCrazyGoal(this, 1.2));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.2));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0F, PegasusEntity.class));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.25F, stack -> stack.is(ItemTags.HORSE_TEMPT_ITEMS), false));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.25F, Ingredient.of(Items.GOLDEN_CARROT, Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE), false));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.0F));
         this.goalSelector.addGoal(6, new RandomStrollGoal(this, 0.7));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -181,8 +183,8 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
     }
 
     @Override
-    public boolean isFood(ItemStack itemStack) {
-        return itemStack.is(ItemTags.HORSE_FOOD);
+    public boolean isFood(@NotNull ItemStack itemStack) {
+        return PEGASUS_FOOD.test(itemStack);
     }
 
     @Override
@@ -205,8 +207,8 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
     }
 
     @Override
-    protected void dropAllDeathLoot(@NotNull ServerLevel pLevel, @NotNull DamageSource pDamageSource) {
-        super.dropAllDeathLoot(pLevel, pDamageSource);
+    protected void dropAllDeathLoot(@NotNull DamageSource damageSource) {
+        super.dropAllDeathLoot(damageSource);
         if(this.isSaddled()){
             this.spawnAtLocation(new ItemStack(Items.SADDLE));
         }
@@ -237,7 +239,7 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
     private void calculateGlidingMovements(){
         Vec3 movement = this.getDeltaMovement();
         if(movement.y < -0.25){
-            Vec3 calcMovement = new Vec3(movement.x * 1.1, movement.y * 0.9, movement.z * 1.1);
+            Vec3 calcMovement = new Vec3(movement.x * 1.1, movement.y * 0.8, movement.z * 1.1);
             this.setDeltaMovement(calcMovement);
             this.setLastGlidingVelocity((float) calcMovement.y);
             this.setLastGlidingCalc(this.tickCount);
@@ -318,11 +320,10 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
             this.setFlying(false);
             return 0;
         }else {
-            double safeFallDist = this.getAttributeValue(Attributes.SAFE_FALL_DISTANCE);
-            double calcFallDist = pFallDistance - safeFallDist;
+            double calcFallDist = pFallDistance - 3;
             this.setGliding(false);
             this.setFlying(false);
-            return Mth.ceil((calcFallDist * pDamageMultiplier) * this.getAttributeValue(Attributes.FALL_DAMAGE_MULTIPLIER));
+            return Mth.ceil((calcFallDist * pDamageMultiplier) * 0.5f);
         }
     }
 
@@ -394,14 +395,6 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
         return 100;
     }
 
-    @Override
-    public boolean handleLeashAtDistance(@NotNull Entity pLeashHolder, float pDistance) {
-        if(pDistance > 6f && this.isGrassing()){
-            this.setGrassing(false);
-        }
-        return true;
-    }
-
     public void setFlying(boolean flying){
         this.setFlag(FLAG_FLYING, flying);
     }
@@ -457,7 +450,7 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
     }
 
     @Override
-    public void equipSaddle(@NotNull ItemStack itemStack, @Nullable SoundSource soundSource) {
+    public void equipSaddle(@Nullable SoundSource soundSource) {
         this.setSaddled(true);
     }
 
@@ -558,7 +551,7 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
     public void makeMad() {
         if (!this.isRearing()) {
             this.startRearing();
-            this.makeSound(this.getAngrySound());
+            this.playSound(this.getAngrySound());
         }
 
     }
@@ -566,7 +559,7 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
     public InteractionResult fedFood(Player pPlayer, ItemStack pStack) {
         boolean flag = this.handleEating(pPlayer, pStack);
         if (flag) {
-            pStack.consume(1, pPlayer);
+            pStack.shrink(1);
         }
 
         if (this.level().isClientSide) {
@@ -665,7 +658,7 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
                 //GLIDING
                 Vec3 move = this.getDeltaMovement();
                 if(move.y < -0.25){
-                    Vec3 calcMovement = new Vec3(move.x * 1.1, move.y * 0.9, move.z * 1.1);
+                    Vec3 calcMovement = new Vec3(move.x * 1.1, move.y * 0.8, move.z * 1.1);
                     this.setDeltaMovement(calcMovement);
                 }
             }
@@ -734,7 +727,7 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
     }
 
     protected void executeRidersJump(Vec3 pTravelVector) {
-        double d0 = this.getJumpPower(1);
+        double d0 = this.getJumpPower();
         Vec3 vec3 = this.getDeltaMovement();
         this.setDeltaMovement(vec3.x, d0, vec3.z);
         this.setFlying(true);
@@ -859,13 +852,13 @@ public class PegasusEntity extends Animal implements VariantHolder<PegasusEntity
     }
 
     @Override
-    public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor pLevel, @NotNull DifficultyInstance pDifficulty, @NotNull MobSpawnType pSpawnType, @Nullable SpawnGroupData pSpawnGroupData) {
+    public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor pLevel, @NotNull DifficultyInstance pDifficulty, @NotNull MobSpawnType pSpawnType, @Nullable SpawnGroupData pSpawnGroupData, @Nullable CompoundTag dataTag) {
         Variant variant = Util.getRandom(Variant.values(), this.random);
         this.setVariant(variant);
         if (pSpawnGroupData == null) {
             pSpawnGroupData = new AgeableMob.AgeableMobGroupData(false);
         }
-        return super.finalizeSpawn(pLevel, pDifficulty, pSpawnType, pSpawnGroupData);
+        return super.finalizeSpawn(pLevel, pDifficulty, pSpawnType, pSpawnGroupData, dataTag);
     }
 
     public enum Variant implements StringRepresentable {

@@ -15,6 +15,6 @@ public class BlacksmithCyclopsRenderer extends MobRenderer<BlacksmithCyclopsEnti
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull BlacksmithCyclopsEntity cyclopsEntity) {
-        return ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/cyclops/blacksmith_cyclops.png");
+        return new ResourceLocation(Constants.MOD_ID, "textures/entity/cyclops/blacksmith_cyclops.png");
     }
 }

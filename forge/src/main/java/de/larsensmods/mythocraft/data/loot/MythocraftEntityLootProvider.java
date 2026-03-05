@@ -6,7 +6,6 @@ import de.larsensmods.mythocraft.entity.friendly.PegasusEntity;
 import de.larsensmods.mythocraft.entity.friendly.SatyrEntity;
 import de.larsensmods.mythocraft.entity.monster.CyclopsEntity;
 import de.larsensmods.mythocraft.entity.monster.NemeanLionEntity;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.EntityLootSubProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlags;
@@ -17,8 +16,8 @@ import java.util.stream.Stream;
 
 public class MythocraftEntityLootProvider extends EntityLootSubProvider {
 
-    public MythocraftEntityLootProvider(HolderLookup.Provider lookupProvider) {
-        super(FeatureFlags.DEFAULT_FLAGS, lookupProvider);
+    public MythocraftEntityLootProvider() {
+        super(FeatureFlags.DEFAULT_FLAGS);
     }
 
     @Override

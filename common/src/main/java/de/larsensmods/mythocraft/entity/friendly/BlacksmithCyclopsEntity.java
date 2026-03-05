@@ -98,9 +98,9 @@ public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarr
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
-        super.defineSynchedData(pBuilder);
-        pBuilder.define(CRAFTING_TICKS, -1);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(CRAFTING_TICKS, -1);
     }
 
     @Override
@@ -163,12 +163,12 @@ public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarr
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
-        this.writeInventoryToTag(pCompound, this.registryAccess());
+        this.writeInventoryToTag(pCompound);
     }
 
     public void readAdditionalSaveData(@NotNull CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
-        this.readInventoryFromTag(pCompound, this.registryAccess());
+        this.readInventoryFromTag(pCompound);
     }
 
     @Override
@@ -179,17 +179,20 @@ public class BlacksmithCyclopsEntity extends AgeableMob implements InventoryCarr
     @Override
     public void handleDamageEvent(@NotNull DamageSource pDamageSource) {
         //Prevent fire-related damages since cyclopses are immune to them
-        if(pDamageSource.is(DamageTypes.IN_FIRE) || pDamageSource.is(DamageTypes.ON_FIRE) || pDamageSource.is(DamageTypes.LAVA) || pDamageSource.is(DamageTypes.FIREBALL) || pDamageSource.is(DamageTypes.CAMPFIRE)){
+        if(pDamageSource.is(DamageTypes.IN_FIRE) || pDamageSource.is(DamageTypes.ON_FIRE) || pDamageSource.is(DamageTypes.LAVA) || pDamageSource.is(DamageTypes.FIREBALL)){
             return;
         }
         super.handleDamageEvent(pDamageSource);
     }
 
     @Override
-    protected void dropCustomDeathLoot(@NotNull ServerLevel pLevel, @NotNull DamageSource pDamageSource, boolean pRecentlyHit) {
-        super.dropCustomDeathLoot(pLevel, pDamageSource, pRecentlyHit);
-        for(ItemStack stack : this.inventory.getItems()){
-            this.spawnAtLocation(stack);
+    protected void dropCustomDeathLoot(@NotNull DamageSource source, int looting, boolean recentlyHit) {
+        super.dropCustomDeathLoot(source, looting, recentlyHit);
+        for(int i = 0; i < this.inventory.getContainerSize(); i++){
+            ItemStack stack = this.inventory.getItem(i);
+            if(!stack.isEmpty()) {
+                this.spawnAtLocation(stack);
+            }
         }
     }
 

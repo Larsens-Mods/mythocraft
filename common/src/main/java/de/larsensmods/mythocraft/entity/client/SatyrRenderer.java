@@ -17,10 +17,10 @@ import java.util.Map;
 public class SatyrRenderer extends MobRenderer<SatyrEntity, SatyrModel<SatyrEntity>> {
 
     private static final Map<SatyrVariant, ResourceLocation> TEXTURE_MAP = Util.make(Maps.newEnumMap(SatyrVariant.class), map -> {
-        map.put(SatyrVariant.VARIANT_0, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/satyr/satyr1.png"));
-        map.put(SatyrVariant.VARIANT_1, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/satyr/satyr2.png"));
+        map.put(SatyrVariant.VARIANT_0, new ResourceLocation(Constants.MOD_ID, "textures/entity/satyr/satyr1.png"));
+        map.put(SatyrVariant.VARIANT_1, new ResourceLocation(Constants.MOD_ID, "textures/entity/satyr/satyr2.png"));
     });
-    private static final ResourceLocation DEFAULT_TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/satyr/satyr1.png");
+    private static final ResourceLocation DEFAULT_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/entity/satyr/satyr1.png");
 
     public SatyrRenderer(EntityRendererProvider.Context pContext) {
         super(pContext, new SatyrModel<>(pContext.bakeLayer(SatyrModel.LAYER_LOCATION)), 0.3f);

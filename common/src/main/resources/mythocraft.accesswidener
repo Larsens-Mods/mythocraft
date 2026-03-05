@@ -7,3 +7,5 @@ accessible class net/minecraft/client/renderer/RenderType$CompositeState
 accessible class net/minecraft/client/renderer/RenderType$CompositeRenderType
 accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
 accessible class net/minecraft/client/renderer/RenderStateShard$EmptyTextureStateShard
+
+accessible method net/minecraft/client/renderer/entity/layers/HumanoidArmorLayer getArmorLocation (Lnet/minecraft/world/item/ArmorItem;ZLjava/lang/String;)Lnet/minecraft/resources/ResourceLocation;

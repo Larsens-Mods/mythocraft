@@ -7,5 +7,5 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
 public class MythocraftBlockTags {
-    public static final TagKey<Block> IS_CHEST = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "is_chest"));
+    public static final TagKey<Block> IS_CHEST = TagKey.create(Registries.BLOCK, new ResourceLocation(Constants.MOD_ID, "is_chest"));
 }

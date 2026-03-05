@@ -6,7 +6,6 @@ import de.larsensmods.mythocraft.entity.client.cyclops.BlacksmithCyclopsModel;
 import de.larsensmods.mythocraft.entity.client.cyclops.BlacksmithCyclopsRenderer;
 import de.larsensmods.mythocraft.entity.client.cyclops.CyclopsModel;
 import de.larsensmods.mythocraft.entity.client.cyclops.CyclopsRenderer;
-import de.larsensmods.mythocraft.entity.friendly.BlacksmithCyclopsEntity;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

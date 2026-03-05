@@ -16,15 +16,15 @@ import java.util.Map;
 public class PegasusRenderer extends MobRenderer<PegasusEntity, PegasusModel<PegasusEntity>> {
 
     private static final Map<PegasusEntity.Variant, ResourceLocation> TEXTURE_MAP = Util.make(Maps.newEnumMap(PegasusEntity.Variant.class), map -> {
-        map.put(PegasusEntity.Variant.WHITE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/pegasus/pegasus_white.png"));
-        map.put(PegasusEntity.Variant.BLACK, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/pegasus/pegasus_black.png"));
-        map.put(PegasusEntity.Variant.BROWN, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/pegasus/pegasus_brown.png"));
-        map.put(PegasusEntity.Variant.CHESTNUT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/pegasus/pegasus_chestnut.png"));
-        map.put(PegasusEntity.Variant.CREAMY, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/pegasus/pegasus_creamy.png"));
-        map.put(PegasusEntity.Variant.DARK_BROWN, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/pegasus/pegasus_darkbrown.png"));
-        map.put(PegasusEntity.Variant.GRAY, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/pegasus/pegasus_gray.png"));
+        map.put(PegasusEntity.Variant.WHITE, new ResourceLocation(Constants.MOD_ID, "textures/entity/pegasus/pegasus_white.png"));
+        map.put(PegasusEntity.Variant.BLACK, new ResourceLocation(Constants.MOD_ID, "textures/entity/pegasus/pegasus_black.png"));
+        map.put(PegasusEntity.Variant.BROWN, new ResourceLocation(Constants.MOD_ID, "textures/entity/pegasus/pegasus_brown.png"));
+        map.put(PegasusEntity.Variant.CHESTNUT, new ResourceLocation(Constants.MOD_ID, "textures/entity/pegasus/pegasus_chestnut.png"));
+        map.put(PegasusEntity.Variant.CREAMY, new ResourceLocation(Constants.MOD_ID, "textures/entity/pegasus/pegasus_creamy.png"));
+        map.put(PegasusEntity.Variant.DARK_BROWN, new ResourceLocation(Constants.MOD_ID, "textures/entity/pegasus/pegasus_darkbrown.png"));
+        map.put(PegasusEntity.Variant.GRAY, new ResourceLocation(Constants.MOD_ID, "textures/entity/pegasus/pegasus_gray.png"));
     });
-    private static final ResourceLocation DEFAULT_TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/pegasus/pegasus_white.png");
+    private static final ResourceLocation DEFAULT_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/entity/pegasus/pegasus_white.png");
 
     public PegasusRenderer(EntityRendererProvider.Context pContext) {
         super(pContext, new PegasusModel<>(pContext.bakeLayer(PegasusModel.LAYER_LOCATION)), 0.75f);

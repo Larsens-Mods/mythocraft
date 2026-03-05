@@ -11,21 +11,20 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
 public class ElytraLayerMixinCore {
 
-    public static <T extends LivingEntity> VertexConsumer enableTransparency(MultiBufferSource bufferSource, RenderType renderType, boolean hasFoil, Operation<VertexConsumer> original, T livingEntity){
+    public static <T extends LivingEntity> VertexConsumer enableTransparency(MultiBufferSource bufferSource, RenderType renderType, boolean noEntity, boolean withGlint, Operation<VertexConsumer> original, T livingEntity){
         if(!(livingEntity instanceof Player player) || !(player.getInventory().getArmor(Inventory.HELMET_SLOT_ONLY[0]).is(MythItems.HADES_HELM.get()))){
-            return original.call(bufferSource, renderType, hasFoil);
+            return original.call(bufferSource, renderType, noEntity, withGlint);
         }
         if(!Minecraft.getInstance().options.getCameraType().isFirstPerson() && player.is(Minecraft.getInstance().player)){
-            return ItemRenderer.getFoilBufferDirect(bufferSource, renderType, hasFoil, hasFoil);
+            return ItemRenderer.getFoilBufferDirect(bufferSource, renderType, noEntity, withGlint);
         }else{
-            return original.call(bufferSource, renderType, hasFoil);
+            return original.call(bufferSource, renderType, noEntity, withGlint);
         }
     }
 
@@ -40,15 +39,15 @@ public class ElytraLayerMixinCore {
         }
     }
 
-    public static <T extends LivingEntity> void modRendering(ElytraModel<T> instance, PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, Operation<Void> original, T livingEntity){
+    public static <T extends LivingEntity> void modRendering(ElytraModel<T> instance, PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, Operation<Void> original, T livingEntity){
         if(!(livingEntity instanceof Player player) || !(player.getInventory().getArmor(Inventory.HELMET_SLOT_ONLY[0]).is(MythItems.HADES_HELM.get()))){
-            original.call(instance, poseStack, vertexConsumer, packedLight, packedOverlay);
+            original.call(instance, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             return;
         }
         if(!Minecraft.getInstance().options.getCameraType().isFirstPerson() && player.is(Minecraft.getInstance().player)){
-            instance.renderToBuffer(poseStack, vertexConsumer, packedLight, packedOverlay, FastColor.ARGB32.color(FastColor.as8BitChannel(MythConfigValues.HADES_HELM_RENDER_TRANSPARENCY), -1));
+            instance.renderToBuffer(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha * MythConfigValues.HADES_HELM_RENDER_TRANSPARENCY);
         }else{
-            original.call(instance, poseStack, vertexConsumer, packedLight, packedOverlay);
+            original.call(instance, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         }
     }
 

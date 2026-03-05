@@ -30,10 +30,10 @@ public class MythocraftModelProvider extends FabricModelProvider {
         itemModelGenerator.generateFlatItem(MythItems.NEMEAN_COAT.get(), ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(MythItems.HADES_HELM.get(), ModelTemplates.FLAT_ITEM);
 
-        itemModelGenerator.generateFlatItem(MythItems.SATYR_SPAWN_EGG.get(), new ModelTemplate(Optional.of(ResourceLocation.withDefaultNamespace("item/template_spawn_egg")), Optional.empty()));
-        itemModelGenerator.generateFlatItem(MythItems.PEGASUS_SPAWN_EGG.get(), new ModelTemplate(Optional.of(ResourceLocation.withDefaultNamespace("item/template_spawn_egg")), Optional.empty()));
-        itemModelGenerator.generateFlatItem(MythItems.NEMEAN_LION_SPAWN_EGG.get(), new ModelTemplate(Optional.of(ResourceLocation.withDefaultNamespace("item/template_spawn_egg")), Optional.empty()));
-        itemModelGenerator.generateFlatItem(MythItems.CYCLOPS_SPAWN_EGG.get(), new ModelTemplate(Optional.of(ResourceLocation.withDefaultNamespace("item/template_spawn_egg")), Optional.empty()));
-        itemModelGenerator.generateFlatItem(MythItems.BLACKSMITH_CYCLOPS_SPAWN_EGG.get(), new ModelTemplate(Optional.of(ResourceLocation.withDefaultNamespace("item/template_spawn_egg")), Optional.empty()));
+        itemModelGenerator.generateFlatItem(MythItems.SATYR_SPAWN_EGG.get(), new ModelTemplate(Optional.of(new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "item/template_spawn_egg")), Optional.empty()));
+        itemModelGenerator.generateFlatItem(MythItems.PEGASUS_SPAWN_EGG.get(), new ModelTemplate(Optional.of(new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "item/template_spawn_egg")), Optional.empty()));
+        itemModelGenerator.generateFlatItem(MythItems.NEMEAN_LION_SPAWN_EGG.get(), new ModelTemplate(Optional.of(new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "item/template_spawn_egg")), Optional.empty()));
+        itemModelGenerator.generateFlatItem(MythItems.CYCLOPS_SPAWN_EGG.get(), new ModelTemplate(Optional.of(new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "item/template_spawn_egg")), Optional.empty()));
+        itemModelGenerator.generateFlatItem(MythItems.BLACKSMITH_CYCLOPS_SPAWN_EGG.get(), new ModelTemplate(Optional.of(new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "item/template_spawn_egg")), Optional.empty()));
     }
 }

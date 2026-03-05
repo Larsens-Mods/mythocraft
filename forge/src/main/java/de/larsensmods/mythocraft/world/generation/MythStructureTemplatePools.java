@@ -1,0 +1,49 @@
+package de.larsensmods.mythocraft.world.generation;
+
+import com.mojang.datafixers.util.Pair;
+import de.larsensmods.mythocraft.data.MythocraftStructureTemplatePools;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.Pools;
+import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
+import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+
+import java.util.List;
+
+public class MythStructureTemplatePools {
+
+    public static void bootstrap(BootstapContext<StructureTemplatePool> structureTemplatePoolBootstapContext) {
+        HolderGetter<StructureTemplatePool> structureTemplatePoolHolderGetter = structureTemplatePoolBootstapContext.lookup(Registries.TEMPLATE_POOL);
+
+        structureTemplatePoolBootstapContext.register(MythocraftStructureTemplatePools.GREEK_TEMPLE, new StructureTemplatePool(
+                structureTemplatePoolHolderGetter.getOrThrow(Pools.EMPTY),
+                List.of(
+                        Pair.of(StructurePoolElement.single("mythocraft:greek_temple"), 1)
+                ),
+                StructureTemplatePool.Projection.RIGID
+        ));
+        structureTemplatePoolBootstapContext.register(MythocraftStructureTemplatePools.CYCLOPS_CAVE, new StructureTemplatePool(
+                structureTemplatePoolHolderGetter.getOrThrow(Pools.EMPTY),
+                List.of(
+                        Pair.of(StructurePoolElement.single("mythocraft:cyclops_cave"), 1)
+                ),
+                StructureTemplatePool.Projection.RIGID
+        ));
+        structureTemplatePoolBootstapContext.register(MythocraftStructureTemplatePools.CYCLOPS_PEN, new StructureTemplatePool(
+                structureTemplatePoolHolderGetter.getOrThrow(Pools.EMPTY),
+                List.of(
+                        Pair.of(StructurePoolElement.single("mythocraft:cyclops_sheep_pen"), 1)
+                ),
+                StructureTemplatePool.Projection.RIGID
+        ));
+        structureTemplatePoolBootstapContext.register(MythocraftStructureTemplatePools.CYCLOPS_FORGE, new StructureTemplatePool(
+                structureTemplatePoolHolderGetter.getOrThrow(Pools.EMPTY),
+                List.of(
+                        Pair.of(StructurePoolElement.single("mythocraft:cyclops_forge"), 1)
+                ),
+                StructureTemplatePool.Projection.RIGID
+        ));
+    }
+
+}

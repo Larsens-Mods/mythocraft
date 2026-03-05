@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "mythocraft:nemean_coat"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "nemean_kill": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "mythocraft:nemean_lion_pelt"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "nemean_kill",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "mythocraft:nemean_coat"
+    ]
+  },
+  "sends_telemetry_event": false
+}
