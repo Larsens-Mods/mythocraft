@@ -1,5 +1,5 @@
-// 1.20.1	2026-03-05T16:45:56.6383702	Mythocraft/minecraft:entity Loot Table
-0da01c9d9d9a9fe5a81abac3b3c7e52c0ffa72a1 data\mythocraft\loot_tables\entities\nemean_lion.json
-d4c6bd6f66b0757b2a717de8b0e943fd6b02c0fb data\mythocraft\loot_tables\entities\cyclops.json
+// 1.20.1	2026-03-09T20:37:47.9853749	Mythocraft/minecraft:entity Loot Table
 d4c6bd6f66b0757b2a717de8b0e943fd6b02c0fb data\mythocraft\loot_tables\entities\blacksmith_cyclops.json
+d4c6bd6f66b0757b2a717de8b0e943fd6b02c0fb data\mythocraft\loot_tables\entities\cyclops.json
 79e2b2ccbb02a1c9e4ed49866d725c26a1abbf5a data\mythocraft\loot_tables\entities\pegasus.json
+0da01c9d9d9a9fe5a81abac3b3c7e52c0ffa72a1 data\mythocraft\loot_tables\entities\nemean_lion.json

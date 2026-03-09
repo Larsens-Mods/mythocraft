@@ -1,13 +1,11 @@
 plugins {
     id 'multiloader-loader'
     id 'net.neoforged.moddev.legacyforge'
-//    id 'org.spongepowered.mixin' version '0.7.+'
 }
-base {
-    archivesName = "${mod_name}-forge-${minecraft_version}"
-}
+
 mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
+    add(sourceSets.main, "${mod_id}.refmap.json")
+
     config("${mod_id}.mixins.json")
     config("${mod_id}.forge.mixins.json")
 }
@@ -15,34 +13,32 @@ mixin {
 legacyForge {
     version = "${minecraft_version}-${forge_version}"
 
-    //validateAccessTransformers = true
+    validateAccessTransformers = false
 
-    // Automatically enable forge AccessTransformers if the file exists
-    // This location is hardcoded in Forge and can not be changed.
-    // https://github.com/MinecraftForge/MinecraftForge/blob/be1698bb1554f9c8fa2f58e32b9ab70bc4385e60/fmlloader/src/main/java/net/minecraftforge/fml/loading/moddiscovery/ModFile.java#L123
-    // Forge still uses SRG names during compile time, so we cannot use the common AT's
-    def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    def at = project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')
     if (at.exists()) {
-        accessTransformers = [at.absolutePath]
+        accessTransformers = ["src/main/resources/META-INF/accesstransformer.cfg"]
     }
-
     parchment {
         minecraftVersion = parchment_minecraft
         mappingsVersion = parchment_version
     }
-
     runs {
         client {
             client()
         }
-
-        server {
-            server()
-        }
-
         data {
             data()
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+        server {
+            server()
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
         }
     }
 }
@@ -50,46 +46,23 @@ legacyForge {
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
 dependencies {
-    //minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    compileOnly project(":common")
     annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
 
+    implementation group: 'io.github.llamalad7', name: 'mixinextras-forge', version: '0.5.3'
     implementation group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.5.3'
     annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.5.3'
-
-    // Forge's hack fix
-    //implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
 
     implementation 'org.jetbrains:annotations:16.0.2'
 
     compileOnly('de.larsensmods:lmcc-forge-1.20.1:1.0.1')
 }
 
-/*publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            fg.component(it)
-        }
-    }
-}*/
-
-tasks.named('jar', Jar).configure {
-    manifest {
-        attributes([
-                'MixinConfigs': "${mod_id}.mixins.json, ${mod_id}.forge.mixins.json"
-        ])
-    }
-}
-
-sourceSets {
-    main {
-        ext.refMap = "${mod_id}.refmap.json"
-    }
-}
-
-sourceSets.each {
-    def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
-    it.output.resourcesDir = dir
-    it.java.destinationDirectory = dir
+jar {
+    finalizedBy('reobfJar')
+    manifest.attributes([
+            "MixinConfigs": "${mod_id}.mixins.json,${mod_id}.forge.mixins.json"
+    ])
 }
 
 processResources {

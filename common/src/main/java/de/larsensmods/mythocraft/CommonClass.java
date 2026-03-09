@@ -8,7 +8,6 @@ import de.larsensmods.mythocraft.entity.friendly.PegasusEntity;
 import de.larsensmods.mythocraft.entity.friendly.SatyrEntity;
 import de.larsensmods.mythocraft.entity.monster.CyclopsEntity;
 import de.larsensmods.mythocraft.entity.monster.NemeanLionEntity;
-import de.larsensmods.mythocraft.item.MythArmorMaterials;
 import de.larsensmods.mythocraft.item.MythCreativeTabs;
 import de.larsensmods.mythocraft.item.MythItems;
 import de.larsensmods.mythocraft.platform.Services;

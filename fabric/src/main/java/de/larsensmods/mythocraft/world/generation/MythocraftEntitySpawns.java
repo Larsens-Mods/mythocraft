@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.level.biome.Biomes;
 
 public class MythocraftEntitySpawns {
 

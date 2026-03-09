@@ -1,42 +1,43 @@
 {
-  "schemaVersion": 1,
-  "id": "${mod_id}",
-  "version": "${version}",
-  "name": "${mod_name}",
-  "description": "${description}",
-  "authors": [
-    "${mod_author}"
-  ],
-  "contact": {
-    "homepage": "https://larsensmods.de/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
-  },
-  "license": "${license}",
-  "icon": "${mod_id}.png",
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "de.larsensmods.mythocraft.MythocraftMod"
+    "schemaVersion": 1,
+    "id": "${mod_id}",
+    "version": "${version}",
+    "name": "${mod_name}",
+    "description": "${description}",
+    "authors": [
+        "${mod_author}"
     ],
-    "client": [
-      "de.larsensmods.mythocraft.client.MythocraftModClient"
+    "contact": {
+        "homepage": "https://larsensmods.de/",
+        "sources": "https://github.com/FabricMC/fabric-example-mod"
+    },
+    "license": "${license}",
+    "icon": "${mod_id}.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "de.larsensmods.mythocraft.MythocraftMod"
+        ],
+        "client": [
+            "de.larsensmods.mythocraft.client.MythocraftModClient"
+        ],
+        "fabric-datagen": [
+            "de.larsensmods.mythocraft.data.MythocraftDataGenerator"
+        ]
+    },
+    "mixins": [
+        "${mod_id}.mixins.json",
+        "${mod_id}.fabric.mixins.json"
     ],
-    "fabric-datagen": [
-      "de.larsensmods.mythocraft.data.MythocraftDataGenerator"
-    ]
-  },
-  "mixins": [
-    "${mod_id}.mixins.json",
-    "${mod_id}.fabric.mixins.json"
-  ],
-  "depends": {
-    "fabricloader": ">=${fabric_loader_version}",
-    "fabric-api": "*",
-    "minecraft": "~${minecraft_version}",
-    "java": ">=${java_version}",
-    "lmcc": "*"
-  },
-  "suggests": {
-    "another-mod": "*"
-  }
+    "depends": {
+        "fabricloader": ">=0.14",
+        "fabric": "*",
+        "minecraft": "${minecraft_version}",
+        "java": ">=17",
+        "lmcc": "*"
+    },
+    "suggests": {
+        "another-mod": "*"
+    }
 }
+  

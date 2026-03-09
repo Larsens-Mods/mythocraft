@@ -11,7 +11,6 @@ import de.larsensmods.mythocraft.entity.monster.NemeanLionEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.animal.IronGolem;
 
 import java.util.Set;
 

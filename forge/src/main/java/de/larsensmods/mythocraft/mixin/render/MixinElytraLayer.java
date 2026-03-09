@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ElytraLayer.class)
 public class MixinElytraLayer<T extends LivingEntity, M extends EntityModel<T>> {
@@ -48,8 +49,8 @@ public class MixinElytraLayer<T extends LivingEntity, M extends EntityModel<T>> 
     @Final
     private ElytraModel<T> elytraModel;
 
-    @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/LivingEntity;FFFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ElytraModel;setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", shift = At.Shift.AFTER), cancellable = true)
-    private void mythocraft$modRenderMethod(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci, @Local ItemStack itemStack, @Local ResourceLocation resourcelocation){
+    @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/LivingEntity;FFFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ElytraModel;setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", shift = At.Shift.AFTER), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
+    private void mythocraft$modRenderMethod(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci, ItemStack itemStack, ResourceLocation resourcelocation){
         VertexConsumer vertexconsumer = mythocraft$enableTransparency(buffer, mythocraft$modRenderType(resourcelocation, RenderType.armorCutoutNoCull(resourcelocation), livingEntity), false, itemStack.hasFoil(), livingEntity);
         mythocraft$modRendering(this.elytraModel, poseStack, vertexconsumer, packedLight, livingEntity);
         poseStack.popPose();
