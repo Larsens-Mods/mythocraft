@@ -12,6 +12,7 @@ import de.larsensmods.mythocraft.item.MythArmorMaterials;
 import de.larsensmods.mythocraft.item.MythCreativeTabs;
 import de.larsensmods.mythocraft.item.MythItems;
 import de.larsensmods.mythocraft.platform.Services;
+import de.larsensmods.mythocraft.world.level.MythChunkGenerators;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.monster.Monster;
@@ -36,6 +37,7 @@ public class CommonClass {
         MythArmorMaterials.registerArmorMaterials();
         MythItems.registerItems();
         MythCreativeTabs.registerCreativeTabs();
+        MythChunkGenerators.registerChunkGenerators();
 
         createEntityAttributes();
         registerSpawnPlacements();
