@@ -2,6 +2,7 @@ package de.larsensmods.mythocraft.world.level;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import de.larsensmods.mythocraft.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.LevelHeightAccessor;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -40,7 +42,14 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public void applyCarvers(@NotNull WorldGenRegion worldGenRegion, long l, @NotNull RandomState randomState, @NotNull BiomeManager biomeManager, @NotNull StructureManager structureManager, @NotNull ChunkAccess chunkAccess, GenerationStep.@NotNull Carving carving) {}
+    public void applyCarvers(@NotNull WorldGenRegion worldGenRegion, long l, @NotNull RandomState randomState, @NotNull BiomeManager biomeManager, @NotNull StructureManager structureManager, @NotNull ChunkAccess chunkAccess, GenerationStep.@NotNull Carving carving) {
+        if(worldGenRegion.getServer() == null) {
+            Constants.LOG.warn("Could not get server from world gen region, skipping structure piece generation for the labyrinth");
+            return;
+        }
+        StructureTemplateManager structureTemplateManager = worldGenRegion.getServer().getStructureManager();
+        //TODO: Generate structure pieces for the labyrinth
+    }
 
     @Override
     public void buildSurface(@NotNull WorldGenRegion worldGenRegion, @NotNull StructureManager structureManager, @NotNull RandomState randomState, @NotNull ChunkAccess chunkAccess) {}
