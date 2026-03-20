@@ -2,6 +2,7 @@ package de.larsensmods.mythocraft;
 
 import de.larsensmods.lmcc.api.entity.AttributeRegistry;
 import de.larsensmods.lmcc.api.entity.SpawnPlacementsRegistry;
+import de.larsensmods.mythocraft.block.MythBlocks;
 import de.larsensmods.mythocraft.entity.MythEntities;
 import de.larsensmods.mythocraft.entity.friendly.BlacksmithCyclopsEntity;
 import de.larsensmods.mythocraft.entity.friendly.PegasusEntity;
@@ -35,6 +36,7 @@ public class CommonClass {
 
         MythEntities.registerEntityTypes();
         MythArmorMaterials.registerArmorMaterials();
+        MythBlocks.registerBlocks();
         MythItems.registerItems();
         MythCreativeTabs.registerCreativeTabs();
         MythChunkGenerators.registerChunkGenerators();

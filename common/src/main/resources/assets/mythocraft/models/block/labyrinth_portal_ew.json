@@ -1,0 +1,8 @@
+{
+  "render_type": "minecraft:translucent",
+  "parent": "minecraft:block/nether_portal_ew",
+  "textures": {
+    "particle": "mythocraft:block/labyrinth_portal",
+    "portal": "mythocraft:block/labyrinth_portal"
+  }
+}

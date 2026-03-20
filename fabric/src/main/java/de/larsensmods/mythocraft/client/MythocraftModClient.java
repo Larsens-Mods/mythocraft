@@ -1,15 +1,16 @@
 package de.larsensmods.mythocraft.client;
 
+import de.larsensmods.mythocraft.block.MythBlocks;
 import de.larsensmods.mythocraft.entity.MythEntities;
 import de.larsensmods.mythocraft.entity.client.*;
 import de.larsensmods.mythocraft.entity.client.cyclops.BlacksmithCyclopsModel;
 import de.larsensmods.mythocraft.entity.client.cyclops.BlacksmithCyclopsRenderer;
 import de.larsensmods.mythocraft.entity.client.cyclops.CyclopsModel;
 import de.larsensmods.mythocraft.entity.client.cyclops.CyclopsRenderer;
-import de.larsensmods.mythocraft.entity.friendly.BlacksmithCyclopsEntity;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 
@@ -20,6 +21,7 @@ public class MythocraftModClient implements ClientModInitializer {
     public void onInitializeClient() {
         this.registerEntityRenderers();
         this.registerEntityModelLayers();
+        this.updateBlockRenderLayers();
     }
 
     private void registerEntityRenderers(){
@@ -36,5 +38,9 @@ public class MythocraftModClient implements ClientModInitializer {
         EntityModelLayerRegistry.registerModelLayer(NemeanLionModel.LAYER_LOCATION, NemeanLionModel::createBodyLayer);
         EntityModelLayerRegistry.registerModelLayer(CyclopsModel.LAYER_LOCATION, CyclopsModel::createBodyLayer);
         EntityModelLayerRegistry.registerModelLayer(BlacksmithCyclopsModel.LAYER_LOCATION, BlacksmithCyclopsModel::createBodyLayer);
+    }
+
+    private void updateBlockRenderLayers(){
+        BlockRenderLayerMap.INSTANCE.putBlock(MythBlocks.LABYRINTH_PORTAL.get(), RenderTypes.translucent());
     }
 }

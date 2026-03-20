@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "mythocraft:block/labyrinth_barrier_rock"
+  }
+}

@@ -24,6 +24,7 @@ public class MythocraftDataGenerator {
 
         //Models
         generator.addProvider(event.includeClient(), new MythocraftItemModelProvider(packOutput, existingFileHelper));
+        generator.addProvider(event.includeClient(), new MythocraftBlockStateProvider(packOutput, existingFileHelper));
 
         //Datapack
         generator.addProvider(event.includeServer(), new MythocraftDatapackEntries(packOutput, lookupProvider));

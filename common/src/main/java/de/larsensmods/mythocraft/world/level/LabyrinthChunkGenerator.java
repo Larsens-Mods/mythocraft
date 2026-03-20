@@ -11,6 +11,7 @@ import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.biome.FixedBiomeSource;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.NetherPortalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -42,12 +43,12 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public void applyCarvers(@NotNull WorldGenRegion worldGenRegion, long l, @NotNull RandomState randomState, @NotNull BiomeManager biomeManager, @NotNull StructureManager structureManager, @NotNull ChunkAccess chunkAccess, GenerationStep.@NotNull Carving carving) {
-        if(worldGenRegion.getServer() == null) {
+    public void applyCarvers(@NotNull WorldGenRegion level, long seed, @NotNull RandomState random, @NotNull BiomeManager biomeManager, @NotNull StructureManager structureManager, @NotNull ChunkAccess chunk, GenerationStep.@NotNull Carving genStep) {
+        if(level.getServer() == null) {
             Constants.LOG.warn("Could not get server from world gen region, skipping structure piece generation for the labyrinth");
             return;
         }
-        StructureTemplateManager structureTemplateManager = worldGenRegion.getServer().getStructureManager();
+        StructureTemplateManager structureTemplateManager = level.getServer().getStructureManager();
         //TODO: Generate structure pieces for the labyrinth
     }
 
