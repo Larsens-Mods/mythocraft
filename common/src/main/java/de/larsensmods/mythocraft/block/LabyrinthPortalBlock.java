@@ -1,6 +1,7 @@
 package de.larsensmods.mythocraft.block;
 
 import de.larsensmods.mythocraft.Constants;
+import de.larsensmods.mythocraft.data.MythLevels;
 import net.minecraft.BlockUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -32,8 +33,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.Set;
 
 public class LabyrinthPortalBlock extends Block implements Portal {
+
+    public static final Set<ResourceKey<Level>> VALID_PORTAL_DIMENSIONS = Set.of(MythLevels.LABYRINTH, Level.OVERWORLD);
 
     public static final EnumProperty<Direction.Axis> AXIS;
     protected static final VoxelShape X_AXIS_AABB;
@@ -79,22 +83,22 @@ public class LabyrinthPortalBlock extends Block implements Portal {
     @Override
     @Nullable
     public DimensionTransition getPortalDestination(ServerLevel pLevel, @NotNull Entity pEntity, @NotNull BlockPos pPos) {
-        ResourceKey<Level> resourcekey = pLevel.dimension() == Level.NETHER ? Level.OVERWORLD : Level.NETHER;
+        ResourceKey<Level> resourcekey = pLevel.dimension() == MythLevels.LABYRINTH ? Level.OVERWORLD : MythLevels.LABYRINTH;
         ServerLevel serverlevel = pLevel.getServer().getLevel(resourcekey);
         if (serverlevel == null) {
             return null;
         } else {
-            boolean flag = serverlevel.dimension() == Level.NETHER;
-            WorldBorder worldborder = serverlevel.getWorldBorder();
-            double d0 = DimensionType.getTeleportationScale(pLevel.dimensionType(), serverlevel.dimensionType());
-            BlockPos blockpos = worldborder.clampToBounds(pEntity.getX() * d0, pEntity.getY(), pEntity.getZ() * d0);
-            return this.getExitPortal(serverlevel, pEntity, pPos, blockpos, flag, worldborder);
+            boolean isLabyrinth = serverlevel.dimension() == MythLevels.LABYRINTH;
+            WorldBorder border = serverlevel.getWorldBorder();
+            double teleportScale = DimensionType.getTeleportationScale(pLevel.dimensionType(), serverlevel.dimensionType());
+            BlockPos resultingPos = border.clampToBounds(pEntity.getX() * teleportScale, pEntity.getY(), pEntity.getZ() * teleportScale);
+            return this.findNearestCounterpart(serverlevel, pEntity, pPos, resultingPos, isLabyrinth, border);
         }
     }
 
     @Nullable
-    private DimensionTransition getExitPortal(ServerLevel pLevel, Entity pEntity, BlockPos pPos, BlockPos pExitPos, boolean pIsNether, WorldBorder pWorldBorder) {
-        Optional<BlockPos> optional = pLevel.getPortalForcer().findClosestPortalPosition(pExitPos, pIsNether, pWorldBorder);
+    private DimensionTransition findNearestCounterpart(ServerLevel pLevel, Entity pEntity, BlockPos pPos, BlockPos pExitPos, boolean pIsLabyrinth, WorldBorder pWorldBorder) {
+        Optional<BlockPos> optional = pLevel.getPortalForcer().findClosestPortalPosition(pExitPos, pIsLabyrinth, pWorldBorder);
         BlockUtil.FoundRectangle blockutil$foundrectangle;
         DimensionTransition.PostDimensionTransition dimensiontransition$postdimensiontransition;
         if (optional.isPresent()) {
@@ -113,7 +117,6 @@ public class LabyrinthPortalBlock extends Block implements Portal {
             blockutil$foundrectangle = optional1.get();
             dimensiontransition$postdimensiontransition = DimensionTransition.PLAY_PORTAL_SOUND.then(DimensionTransition.PLACE_PORTAL_TICKET);
         }
-
         return getDimensionTransitionFromExit(pEntity, pPos, blockutil$foundrectangle, pLevel, dimensiontransition$postdimensiontransition);
     }
 

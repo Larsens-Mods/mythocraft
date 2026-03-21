@@ -75,6 +75,36 @@ public class MythStructures {
                 false,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES
         ));
+
+        //LABYRINTH PORTALS
+        structureBootstrapContext.register(MythocraftStructures.LABYRINTH_PORTAL, new JigsawStructure(
+                new Structure.StructureSettings(
+                        biomeHolderGetter.getOrThrow(MythocraftBiomeTags.HAS_LABYRINTH_STONE_PORTAL),
+                        Map.of(),
+                        GenerationStep.Decoration.SURFACE_STRUCTURES,
+                        TerrainAdjustment.NONE
+
+                ),
+                structureTemplatePoolHolderGetter.getOrThrow(MythocraftStructureTemplatePools.LABYRINTH_PORTAL),
+                1,
+                ConstantHeight.of(VerticalAnchor.absolute(-4)),
+                false,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES
+        ));
+        structureBootstrapContext.register(MythocraftStructures.LABYRINTH_PORTAL_SANDSTONE, new JigsawStructure(
+                new Structure.StructureSettings(
+                        biomeHolderGetter.getOrThrow(MythocraftBiomeTags.HAS_LABYRINTH_SAND_PORTAL),
+                        Map.of(),
+                        GenerationStep.Decoration.SURFACE_STRUCTURES,
+                        TerrainAdjustment.NONE
+
+                ),
+                structureTemplatePoolHolderGetter.getOrThrow(MythocraftStructureTemplatePools.LABYRINTH_PORTAL_SANDSTONE),
+                1,
+                ConstantHeight.of(VerticalAnchor.absolute(-4)),
+                false,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES
+        ));
     }
 
 }

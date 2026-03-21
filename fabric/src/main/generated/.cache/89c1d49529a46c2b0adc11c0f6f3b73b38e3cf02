@@ -1,10 +1,9 @@
-// 1.21	2026-03-20T19:44:41.2960314	Mythocraft/Model Definitions
+// 1.21	2026-03-21T01:28:56.1590194	Mythocraft/Model Definitions
 05efd648df73ec38a77dcb88a12627244e839907 assets\mythocraft\models\item\ambrosia.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets\mythocraft\models\item\satyr_spawn_egg.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets\mythocraft\models\item\nemean_lion_spawn_egg.json
 cc3c484a58c6121e9da36d72e6bc596c3ff875bc assets\mythocraft\models\item\labyrinth_barrier_rock.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets\mythocraft\models\item\pegasus_spawn_egg.json
-fcdc5b57ee94818c6b7ce76376357d062f1ed556 assets\mythocraft\blockstates\labyrinth_portal.json
 833aad855b46f2b60ecf85ef5e1d304c4b8af873 assets\mythocraft\blockstates\labyrinth_barrier_rock.json
 e1a5ac17fd23e9ab2f3162de2e3653ce1733aca3 assets\mythocraft\models\block\labyrinth_barrier_rock.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets\mythocraft\models\item\blacksmith_cyclops_spawn_egg.json
