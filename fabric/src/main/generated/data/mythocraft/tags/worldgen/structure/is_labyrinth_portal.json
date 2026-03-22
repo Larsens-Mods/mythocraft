@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "mythocraft:labyrinth_portal_stonebricks",
+      "required": false
+    },
+    {
+      "id": "mythocraft:labyrinth_portal_sandstone",
+      "required": false
+    }
+  ]
+}

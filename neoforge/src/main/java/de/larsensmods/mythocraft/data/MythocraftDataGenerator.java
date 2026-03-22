@@ -38,6 +38,7 @@ public class MythocraftDataGenerator {
         //Tags
         generator.addProvider(true /*event.includeServer()*/, new MythocraftBiomeTagProvider(packOutput, lookupProvider));
         generator.addProvider(true /*event.includeServer()*/, new MythocraftBlockTagProvider(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(true /*event.includeServer()*/, new MythocraftStructureTagProvider(packOutput, lookupProvider, existingFileHelper));
     }
 
 }

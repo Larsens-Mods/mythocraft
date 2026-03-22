@@ -1,15 +1,19 @@
 package de.larsensmods.mythocraft.world.level;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.larsensmods.mythocraft.Constants;
+import de.larsensmods.mythocraft.data.MythocraftStructures;
 import de.larsensmods.mythocraft.world.level.util.LabyrinthUtilFunctions;
-import net.minecraft.core.BlockPos;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import net.minecraft.core.*;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
-import net.minecraft.world.level.LevelHeightAccessor;
-import net.minecraft.world.level.NoiseColumn;
-import net.minecraft.world.level.StructureManager;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.biome.FixedBiomeSource;
 import net.minecraft.world.level.block.Block;
@@ -18,19 +22,23 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureCheckResult;
+import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
+import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class LabyrinthChunkGenerator extends ChunkGenerator {
@@ -38,6 +46,14 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
     private static final int BASE_FLOOR_THICKNESS = 5;
 
     private static final Map<LabyrinthUtilFunctions.Shape, ResourceLocation> TILE_MAPPINGS = Map.of(
+            LabyrinthUtilFunctions.Shape.EMPTY, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_0x"),
+            LabyrinthUtilFunctions.Shape.DEAD_END, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_1x"),
+            LabyrinthUtilFunctions.Shape.CURVE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_corner"),
+            LabyrinthUtilFunctions.Shape.STRAIGHT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_straight"),
+            LabyrinthUtilFunctions.Shape.THREE_WAY_JUNCTION, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_3x"),
+            LabyrinthUtilFunctions.Shape.FOUR_WAY_JUNCTION, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_4x")
+    );
+    private static final Map<LabyrinthUtilFunctions.Shape, ResourceLocation> PORTAL_TILE_MAPPINGS = Map.of(
             LabyrinthUtilFunctions.Shape.EMPTY, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_0x"),
             LabyrinthUtilFunctions.Shape.DEAD_END, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_1x"),
             LabyrinthUtilFunctions.Shape.CURVE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_corner"),
@@ -71,10 +87,41 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
             Constants.LOG.warn("Could not get server from world gen region, skipping structure piece generation for the labyrinth");
             return;
         }
+        ServerLevel overworld = level.getServer().overworld();
+        Registry<Structure> structureRegistry = overworld.registryAccess().registryOrThrow(Registries.STRUCTURE);
+
         StructureTemplateManager structureTemplateManager = level.getServer().getStructureManager();
         byte tileType = LabyrinthUtilFunctions.calculateCellType(seed, chunk.getPos().x, chunk.getPos().z);
         LabyrinthUtilFunctions.Shape tileShape = LabyrinthUtilFunctions.getShape(tileType);
-        ResourceLocation tileStructure = TILE_MAPPINGS.get(tileShape);
+
+        boolean portalTile = false;
+
+        double teleportScale = DimensionType.getTeleportationScale(level.dimensionType(), overworld.dimensionType());
+        HolderSet<Structure> structureHolderSet = HolderSet.direct(structureRegistry.getHolderOrThrow(MythocraftStructures.LABYRINTH_PORTAL), structureRegistry.getHolderOrThrow(MythocraftStructures.LABYRINTH_PORTAL_SANDSTONE));
+        BlockPos labyrinthOriginPos = chunk.getPos().getMiddleBlockPosition(overworld.getSeaLevel());
+        BlockPos originPos = new BlockPos(
+                (int) (labyrinthOriginPos.getX() * teleportScale),
+                labyrinthOriginPos.getY(),
+                (int) (labyrinthOriginPos.getZ() * teleportScale)
+        );
+        int searchRadius = (int) Math.ceil(1.2 * teleportScale);
+        Pair<BlockPos, Holder<Structure>> result = findNearestMapStructureInLevel(
+                overworld,
+                structureHolderSet,
+                originPos,
+                searchRadius
+        );
+        if(result != null){
+            BlockPos overworldMinPos = new BlockPos((int) (chunk.getPos().getMinBlockX() * teleportScale), overworld.getMinBuildHeight(), (int) (chunk.getPos().getMinBlockZ() * teleportScale));
+            BlockPos overworldMaxPos = new BlockPos((int) (chunk.getPos().getMaxBlockX() * teleportScale), overworld.getMaxBuildHeight(), (int) (chunk.getPos().getMaxBlockZ() * teleportScale));
+
+            if(BlockPos.min(overworldMinPos, result.getFirst()).equals(overworldMinPos) && BlockPos.max(overworldMaxPos, result.getFirst()).equals(overworldMaxPos)){
+                portalTile = true;
+                //Constants.LOG.info("Chunk {} has linked portal at {}", chunk.getPos(), result.getFirst());
+            }
+        }
+
+        ResourceLocation tileStructure = portalTile ? PORTAL_TILE_MAPPINGS.get(tileShape) : TILE_MAPPINGS.get(tileShape);
         if(tileStructure != null){
             StructureTemplate structure = structureTemplateManager.get(tileStructure).orElse(null);
             if(structure != null){
@@ -91,9 +138,98 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
                         level.setBlock(new BlockPos(blockInfo.pos().getX() + chunk.getPos().getMinBlockX(), blockInfo.pos().getY() + baseY, blockInfo.pos().getZ() + chunk.getPos().getMinBlockZ()).offset(offset), blockInfo.state(), Block.UPDATE_NONE);
                     }
                 }
+                if(portalTile){
+                    level.setBlock(new BlockPos(chunk.getPos().getMinBlockX() + 8, baseY + 4, chunk.getPos().getMinBlockZ() + 8), Blocks.DIAMOND_BLOCK.defaultBlockState(), Block.UPDATE_NONE);
+                }
             }
         }
-        //TODO: Generate structure pieces for the labyrinth, find portals in overworld through 'level.getServer().getLevel(Level.OVERWORLD).findNearestMapStructure()'
+    }
+
+    @Nullable
+    private Pair<BlockPos, Holder<Structure>> findNearestMapStructureInLevel(ServerLevel pLevel, HolderSet<Structure> pStructure, BlockPos pPos, int searchRadius) {
+        ChunkGeneratorStructureState chunkgeneratorstructurestate = pLevel.getChunkSource().getGeneratorState();
+        Map<StructurePlacement, Set<Holder<Structure>>> map = new Object2ObjectArrayMap<>();
+        for(Holder<Structure> holder : pStructure) {
+            for(StructurePlacement structureplacement : chunkgeneratorstructurestate.getPlacementsForStructure(holder)) {
+                map.computeIfAbsent(structureplacement, (placement) -> new ObjectArraySet<>()).add(holder);
+            }
+        }
+        if (map.isEmpty()) {
+            return null;
+        } else {
+            Pair<BlockPos, Holder<Structure>> pair2 = null;
+            double d2 = Double.MAX_VALUE;
+            StructureManager structuremanager = pLevel.structureManager();
+            List<Map.Entry<StructurePlacement, Set<Holder<Structure>>>> list = new ArrayList<>(map.size());
+            for(Map.Entry<StructurePlacement, Set<Holder<Structure>>> entry : map.entrySet()) {
+                StructurePlacement placement = entry.getKey();
+                if (placement instanceof RandomSpreadStructurePlacement) {
+                    list.add(entry);
+                }
+            }
+            if (!list.isEmpty()) {
+                int i = SectionPos.blockToSectionCoord(pPos.getX());
+                int j = SectionPos.blockToSectionCoord(pPos.getZ());
+                for(int k = 0; k <= searchRadius; ++k) {
+                    boolean flag = false;
+                    for(Map.Entry<StructurePlacement, Set<Holder<Structure>>> entry1 : list) {
+                        RandomSpreadStructurePlacement randomspreadstructureplacement = (RandomSpreadStructurePlacement)entry1.getKey();
+                        Pair<BlockPos, Holder<Structure>> pair1 = getNearestGeneratedStructure(entry1.getValue(), pLevel, structuremanager, i, j, k, chunkgeneratorstructurestate.getLevelSeed(), randomspreadstructureplacement);
+                        if (pair1 != null) {
+                            flag = true;
+                            double d1 = pPos.distSqr(pair1.getFirst());
+                            if (d1 < d2) {
+                                d2 = d1;
+                                pair2 = pair1;
+                            }
+                        }
+                    }
+                    if (flag) {
+                        return pair2;
+                    }
+                }
+            }
+            return pair2;
+        }
+    }
+
+    @Nullable
+    private static Pair<BlockPos, Holder<Structure>> getNearestGeneratedStructure(Set<Holder<Structure>> pStructureHoldersSet, LevelReader pLevel, StructureManager pStructureManager, int pX, int pY, int pZ, long pSeed, RandomSpreadStructurePlacement pSpreadPlacement) {
+        int i = pSpreadPlacement.spacing();
+        for(int j = -pZ; j <= pZ; ++j) {
+            boolean flag = j == -pZ || j == pZ;
+            for(int k = -pZ; k <= pZ; ++k) {
+                boolean flag1 = k == -pZ || k == pZ;
+                if (flag || flag1) {
+                    int l = pX + i * j;
+                    int i1 = pY + i * k;
+                    ChunkPos chunkpos = pSpreadPlacement.getPotentialStructureChunk(pSeed, l, i1);
+                    Pair<BlockPos, Holder<Structure>> pair = getStructureGeneratingAt(pStructureHoldersSet, pLevel, pStructureManager, pSpreadPlacement, chunkpos);
+                    if (pair != null) {
+                        return pair;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private static Pair<BlockPos, Holder<Structure>> getStructureGeneratingAt(Set<Holder<Structure>> pStructureHoldersSet, LevelReader pLevel, StructureManager pStructureManager, StructurePlacement pPlacement, ChunkPos pChunkPos) {
+        for(Holder<Structure> holder : pStructureHoldersSet) {
+            StructureCheckResult structurecheckresult = pStructureManager.checkStructurePresence(pChunkPos, holder.value(), pPlacement, false);
+            if (structurecheckresult != StructureCheckResult.START_NOT_PRESENT) {
+                if (structurecheckresult == StructureCheckResult.START_PRESENT) {
+                    return Pair.of(pPlacement.getLocatePos(pChunkPos), holder);
+                }
+
+                if(structurecheckresult == StructureCheckResult.CHUNK_LOAD_NEEDED) {
+                    return Pair.of(pChunkPos.getMiddleBlockPosition(pLevel.getMinBuildHeight()), holder);
+                }
+                Constants.LOG.warn("{}:getStructureGeneratingAt() detected technically unreachable state for structurecheckresult {}", LabyrinthChunkGenerator.class.getSimpleName(), structurecheckresult);
+            }
+        }
+        return null;
     }
 
     @Override
