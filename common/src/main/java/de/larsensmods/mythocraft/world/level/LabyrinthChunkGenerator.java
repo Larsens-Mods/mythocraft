@@ -45,21 +45,26 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
 
     private static final int BASE_FLOOR_THICKNESS = 5;
 
-    private static final Map<LabyrinthUtilFunctions.Shape, ResourceLocation> TILE_MAPPINGS = Map.of(
-            LabyrinthUtilFunctions.Shape.EMPTY, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_0x"),
-            LabyrinthUtilFunctions.Shape.DEAD_END, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_1x"),
-            LabyrinthUtilFunctions.Shape.CURVE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_corner"),
-            LabyrinthUtilFunctions.Shape.STRAIGHT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_straight"),
-            LabyrinthUtilFunctions.Shape.THREE_WAY_JUNCTION, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_3x"),
-            LabyrinthUtilFunctions.Shape.FOUR_WAY_JUNCTION, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_4x")
+    private static final Map<LabyrinthUtilFunctions.Shape, ResourceLocation[]> TILE_MAPPINGS = Map.of(
+            LabyrinthUtilFunctions.Shape.EMPTY, new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_0x")},
+            LabyrinthUtilFunctions.Shape.DEAD_END, new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_1x_1"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_1x_2")},
+            LabyrinthUtilFunctions.Shape.CURVE, new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_curve_1"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_curve_2"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_curve_3"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_curve_4"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_curve_5")},
+            LabyrinthUtilFunctions.Shape.STRAIGHT, new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_straight_1"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_straight_2"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_straight_3"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_straight_4"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_straight_5")},
+            LabyrinthUtilFunctions.Shape.THREE_WAY_JUNCTION, new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_3x_1"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_3x_2"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_3x_3"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_3x_4")},
+            LabyrinthUtilFunctions.Shape.FOUR_WAY_JUNCTION, new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_4x_1"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_4x_2"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_4x_3"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_4x_4")}
     );
-    private static final Map<LabyrinthUtilFunctions.Shape, ResourceLocation> PORTAL_TILE_MAPPINGS = Map.of(
-            LabyrinthUtilFunctions.Shape.EMPTY, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_0x"),
-            LabyrinthUtilFunctions.Shape.DEAD_END, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_1x"),
-            LabyrinthUtilFunctions.Shape.CURVE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_corner"),
-            LabyrinthUtilFunctions.Shape.STRAIGHT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_straight"),
-            LabyrinthUtilFunctions.Shape.THREE_WAY_JUNCTION, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_3x"),
-            LabyrinthUtilFunctions.Shape.FOUR_WAY_JUNCTION, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_4x")
+    private static final Map<LabyrinthUtilFunctions.Shape, ResourceLocation[]> PORTAL_TILE_MAPPINGS = Map.of(
+            LabyrinthUtilFunctions.Shape.EMPTY, new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_0x_portal")},
+            LabyrinthUtilFunctions.Shape.DEAD_END, new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_1x_portal_1"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_1x_portal_2")},
+            LabyrinthUtilFunctions.Shape.CURVE, new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_curve_portal_1"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_curve_portal_2")},
+            LabyrinthUtilFunctions.Shape.STRAIGHT, new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_straight_portal_1"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_2x_straight_portal_2")},
+            LabyrinthUtilFunctions.Shape.THREE_WAY_JUNCTION, new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_3x_portal_1"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_3x_portal_2")},
+            LabyrinthUtilFunctions.Shape.FOUR_WAY_JUNCTION, new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_4x_portal_1"), ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_4x_portal_2")}
+    );
+    private static final Map<LabyrinthUtilFunctions.Shape, ResourceLocation[]> BOSS_TILE_MAPPINGS = Map.of(
+            LabyrinthUtilFunctions.Shape.DEAD_END, new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_1x_boss")},
+            LabyrinthUtilFunctions.Shape.THREE_WAY_JUNCTION, new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_3x_boss")},
+            LabyrinthUtilFunctions.Shape.FOUR_WAY_JUNCTION, new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth/labyrinth_tile_4x_boss")}
     );
     private static final Map<Rotation, BlockPos> STRUCTURE_OFFSETS = Map.of(
             Rotation.NONE, BlockPos.ZERO,
@@ -117,11 +122,23 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
 
             if(BlockPos.min(overworldMinPos, result.getFirst()).equals(overworldMinPos) && BlockPos.max(overworldMaxPos, result.getFirst()).equals(overworldMaxPos)){
                 portalTile = true;
-                //Constants.LOG.info("Chunk {} has linked portal at {}", chunk.getPos(), result.getFirst());
             }
         }
 
-        ResourceLocation tileStructure = portalTile ? PORTAL_TILE_MAPPINGS.get(tileShape) : TILE_MAPPINGS.get(tileShape);
+        ResourceLocation tileStructure;
+
+        boolean isBossTile = !portalTile
+                && BOSS_TILE_MAPPINGS.containsKey(tileShape)
+                && BOSS_TILE_MAPPINGS.get(tileShape).length > 0
+                && LabyrinthUtilFunctions.canBeBossTile(seed, chunk.getPos().x, chunk.getPos().z);
+        if(isBossTile){
+            tileStructure = BOSS_TILE_MAPPINGS.get(tileShape)[LabyrinthUtilFunctions.getTileVariant(seed, chunk.getPos().x, chunk.getPos().z, BOSS_TILE_MAPPINGS.get(tileShape).length)];
+        }else{
+            tileStructure = portalTile
+                    ? PORTAL_TILE_MAPPINGS.get(tileShape)[LabyrinthUtilFunctions.getTileVariant(seed, chunk.getPos().x, chunk.getPos().z, PORTAL_TILE_MAPPINGS.get(tileShape).length)]
+                    : TILE_MAPPINGS.get(tileShape)[LabyrinthUtilFunctions.getTileVariant(seed, chunk.getPos().x, chunk.getPos().z, TILE_MAPPINGS.get(tileShape).length)];
+        }
+
         if(tileStructure != null){
             StructureTemplate structure = structureTemplateManager.get(tileStructure).orElse(null);
             if(structure != null){
@@ -136,10 +153,8 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
                 for(Block block : set){
                     for(StructureTemplate.StructureBlockInfo blockInfo : structure.filterBlocks(BlockPos.ZERO, settings, block)){
                         level.setBlock(new BlockPos(blockInfo.pos().getX() + chunk.getPos().getMinBlockX(), blockInfo.pos().getY() + baseY, blockInfo.pos().getZ() + chunk.getPos().getMinBlockZ()).offset(offset), blockInfo.state(), Block.UPDATE_NONE);
+                        //TODO: BLOCK INFO MISSING: CHEST LOOT TABLES AND ALL SPAWNER DATA
                     }
-                }
-                if(portalTile){
-                    level.setBlock(new BlockPos(chunk.getPos().getMinBlockX() + 8, baseY + 4, chunk.getPos().getMinBlockZ() + 8), Blocks.DIAMOND_BLOCK.defaultBlockState(), Block.UPDATE_NONE);
                 }
             }
         }

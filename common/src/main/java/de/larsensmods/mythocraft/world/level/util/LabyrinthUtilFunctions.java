@@ -8,19 +8,30 @@ public class LabyrinthUtilFunctions {
 
     public static byte calculateCellType(long seed, int chunkX, int chunkZ){
         byte result = 0;
-        if(Math.floorMod(randVal(seed, chunkX, chunkZ), 4) < 2){
+        if(Math.floorMod(randVal(seed, chunkX, chunkZ), 6) < 4){
             result |= Connections.EAST.getFlag();
         }
-        if(Math.floorMod(randVal(seed + 1, chunkX, chunkZ), 4) < 2){
+        if(Math.floorMod(randVal(seed + 1, chunkX, chunkZ), 6) < 4){
             result |= Connections.SOUTH.getFlag();
         }
-        if(Math.floorMod(randVal(seed, chunkX - 1, chunkZ), 4) < 2){
+        if(Math.floorMod(randVal(seed, chunkX - 1, chunkZ), 6) < 4){
             result |= Connections.WEST.getFlag();
         }
-        if(Math.floorMod(randVal(seed + 1, chunkX, chunkZ - 1), 4) < 2){
+        if(Math.floorMod(randVal(seed + 1, chunkX, chunkZ - 1), 6) < 4){
             result |= Connections.NORTH.getFlag();
         }
         return result;
+    }
+
+    public static boolean canBeBossTile(long seed, int chunkX, int chunkZ){
+        return Math.floorMod(randVal(seed - 8, chunkX, chunkZ), 64) < 2;
+    }
+
+    public static int getTileVariant(long seed, int chunkX, int chunkZ, int variantCount){
+        if(variantCount <= 0){
+            throw new IllegalArgumentException("variantCount must be a positive number");
+        }
+        return Math.floorMod(randVal(seed + 8, chunkX, chunkZ), variantCount);
     }
 
     private static int randVal(long seed, int chunkX, int chunkZ) {
