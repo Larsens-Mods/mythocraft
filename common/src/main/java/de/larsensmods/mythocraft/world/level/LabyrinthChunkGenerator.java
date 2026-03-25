@@ -9,7 +9,9 @@ import de.larsensmods.mythocraft.world.level.util.LabyrinthUtilFunctions;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.core.*;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
@@ -19,6 +21,9 @@ import net.minecraft.world.level.biome.FixedBiomeSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.TrappedChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -152,8 +157,11 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
                 StructurePlaceSettings settings = new StructurePlaceSettings().setRotation(rotation);
                 for(Block block : set){
                     for(StructureTemplate.StructureBlockInfo blockInfo : structure.filterBlocks(BlockPos.ZERO, settings, block)){
-                        level.setBlock(new BlockPos(blockInfo.pos().getX() + chunk.getPos().getMinBlockX(), blockInfo.pos().getY() + baseY, blockInfo.pos().getZ() + chunk.getPos().getMinBlockZ()).offset(offset), blockInfo.state(), Block.UPDATE_NONE);
-                        //TODO: BLOCK INFO MISSING: CHEST LOOT TABLES AND ALL SPAWNER DATA
+                        BlockPos pos = new BlockPos(blockInfo.pos().getX() + chunk.getPos().getMinBlockX(), blockInfo.pos().getY() + baseY, blockInfo.pos().getZ() + chunk.getPos().getMinBlockZ()).offset(offset);
+                        level.setBlock(pos, blockInfo.state(), Block.UPDATE_NONE);
+                        if(level.getBlockEntity(pos) != null && blockInfo.nbt() != null){
+                            Objects.requireNonNull(level.getBlockEntity(pos)).loadWithComponents(blockInfo.nbt(), level.registryAccess());
+                        }
                     }
                 }
             }
