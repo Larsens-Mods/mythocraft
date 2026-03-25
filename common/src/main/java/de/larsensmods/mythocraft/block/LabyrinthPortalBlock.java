@@ -2,7 +2,7 @@ package de.larsensmods.mythocraft.block;
 
 import de.larsensmods.mythocraft.Constants;
 import de.larsensmods.mythocraft.data.MythLevels;
-import net.minecraft.BlockUtil;
+import de.larsensmods.mythocraft.world.level.data.LevelPortalData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.border.WorldBorder;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.level.portal.PortalShape;
@@ -32,6 +33,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -82,76 +84,154 @@ public class LabyrinthPortalBlock extends Block implements Portal {
 
     @Override
     @Nullable
-    public DimensionTransition getPortalDestination(ServerLevel pLevel, @NotNull Entity pEntity, @NotNull BlockPos pPos) {
-        ResourceKey<Level> resourcekey = pLevel.dimension() == MythLevels.LABYRINTH ? Level.OVERWORLD : MythLevels.LABYRINTH;
-        ServerLevel serverlevel = pLevel.getServer().getLevel(resourcekey);
-        if (serverlevel == null) {
+    public DimensionTransition getPortalDestination(ServerLevel currentLevel, @NotNull Entity entity, @NotNull BlockPos portalPos) {
+        ResourceKey<Level> resourcekey = currentLevel.dimension() == MythLevels.LABYRINTH ? Level.OVERWORLD : MythLevels.LABYRINTH;
+        ServerLevel destinationLevel = currentLevel.getServer().getLevel(resourcekey);
+        if (destinationLevel == null) {
             return null;
         } else {
-            boolean isLabyrinth = serverlevel.dimension() == MythLevels.LABYRINTH;
-            WorldBorder border = serverlevel.getWorldBorder();
-            double teleportScale = DimensionType.getTeleportationScale(pLevel.dimensionType(), serverlevel.dimensionType());
-            BlockPos resultingPos = border.clampToBounds(pEntity.getX() * teleportScale, pEntity.getY(), pEntity.getZ() * teleportScale);
-            return this.findNearestCounterpart(serverlevel, pEntity, pPos, resultingPos, isLabyrinth, border);
+            boolean isLabyrinth = destinationLevel.dimension() == MythLevels.LABYRINTH;
+            WorldBorder border = destinationLevel.getWorldBorder();
+            double teleportScale = DimensionType.getTeleportationScale(currentLevel.dimensionType(), destinationLevel.dimensionType());
+            BlockPos resultingPos = border.clampToBounds(entity.getX() * teleportScale, entity.getY(), entity.getZ() * teleportScale);
+            return this.findNearestCounterpart(destinationLevel, entity, portalPos, resultingPos, isLabyrinth, border, teleportScale);
         }
     }
 
     @Nullable
-    private DimensionTransition findNearestCounterpart(ServerLevel pLevel, Entity pEntity, BlockPos pPos, BlockPos pExitPos, boolean pIsLabyrinth, WorldBorder pWorldBorder) {
-        Optional<BlockPos> optional = pLevel.getPortalForcer().findClosestPortalPosition(pExitPos, pIsLabyrinth, pWorldBorder);
-        BlockUtil.FoundRectangle blockutil$foundrectangle;
-        DimensionTransition.PostDimensionTransition dimensiontransition$postdimensiontransition;
-        if (optional.isPresent()) {
-            BlockPos blockpos = optional.get();
-            BlockState blockstate = pLevel.getBlockState(blockpos);
-            blockutil$foundrectangle = BlockUtil.getLargestRectangleAround(blockpos, blockstate.getValue(BlockStateProperties.HORIZONTAL_AXIS), 21, Direction.Axis.Y, 21, (pos) -> pLevel.getBlockState(pos) == blockstate);
-            dimensiontransition$postdimensiontransition = DimensionTransition.PLAY_PORTAL_SOUND.then((entity) -> entity.placePortalTicket(blockpos));
-        } else {
-            Direction.Axis direction$axis = pEntity.level().getBlockState(pPos).getOptionalValue(AXIS).orElse(Direction.Axis.X);
-            Optional<BlockUtil.FoundRectangle> optional1 = pLevel.getPortalForcer().createPortal(pExitPos, direction$axis);
-            if (optional1.isEmpty()) {
-                Constants.LOG.error("Unable to create a portal, likely target out of worldborder");
-                return null;
+    private DimensionTransition findNearestCounterpart(ServerLevel inLevel, Entity pEntity, BlockPos entryPortalPos, BlockPos exitPos, boolean isDestinationLabyrinth, WorldBorder destinationWorldBorder, double teleportScale) {
+        BlockPos exitPortalBasePos = null;
+        LevelPortalData portalData = inLevel.getDataStorage().computeIfAbsent(LevelPortalData.factory(), LevelPortalData.NAME);
+        ChunkAccess chunkAccess = inLevel.getChunk(exitPos);
+        Optional<Long> dataPortalPos = portalData.getPortalBaseForChunk(chunkAccess.getPos().toLong());
+
+        boolean findPortalPos = dataPortalPos.isEmpty();
+
+        if(!findPortalPos) {
+            exitPortalBasePos = BlockPos.of(dataPortalPos.get());
+            if(!isValidPortalShape(inLevel, exitPortalBasePos, Direction.Axis.X) && !isValidPortalShape(inLevel, exitPortalBasePos, Direction.Axis.Z)){
+                Constants.LOG.warn("Portal base position stored in LevelPortalData for chunk {} is not a valid portal shape anymore! Removing entry from data.", chunkAccess.getPos());
+                portalData.clearPortalBaseForChunk(chunkAccess.getPos());
+                findPortalPos = true;
+                exitPortalBasePos = null;
             }
-
-            blockutil$foundrectangle = optional1.get();
-            dimensiontransition$postdimensiontransition = DimensionTransition.PLAY_PORTAL_SOUND.then(DimensionTransition.PLACE_PORTAL_TICKET);
         }
-        return getDimensionTransitionFromExit(pEntity, pPos, blockutil$foundrectangle, pLevel, dimensiontransition$postdimensiontransition);
+        if(findPortalPos) {
+            Set<BlockPos> barrierRockPositions = new HashSet<>();
+            Set<BlockPos> labyrinthPortalPositions = new HashSet<>();
+            BlockPos minPos, maxPos;
+            if (isDestinationLabyrinth) {
+                minPos = new BlockPos(chunkAccess.getPos().getMinBlockX(), inLevel.getMinBuildHeight(), chunkAccess.getPos().getMinBlockZ());
+                maxPos = new BlockPos(chunkAccess.getPos().getMaxBlockX(), inLevel.getMaxBuildHeight(), chunkAccess.getPos().getMaxBlockZ());
+            } else {
+                ChunkPos entryChunkPos = inLevel.getChunk(entryPortalPos).getPos();
+                minPos = new BlockPos((int) (entryChunkPos.getMinBlockX() * teleportScale), inLevel.getMinBuildHeight(), (int) (entryChunkPos.getMinBlockZ() * teleportScale));
+                maxPos = new BlockPos((int) (entryChunkPos.getMaxBlockX() * teleportScale), inLevel.getMaxBuildHeight(), (int) (entryChunkPos.getMaxBlockZ() * teleportScale));
+            }
+            for(BlockPos pos : BlockPos.betweenClosed(minPos, maxPos)) {
+                if(inLevel.getBlockState(pos).is(MythBlocks.LABYRINTH_BARRIER_ROCK.get())) {
+                    barrierRockPositions.add(pos.immutable());
+                }else if(inLevel.getBlockState(pos).is(MythBlocks.LABYRINTH_PORTAL.get())) {
+                    labyrinthPortalPositions.add(pos.immutable());
+                }
+            }
+            boolean searchForShape = labyrinthPortalPositions.isEmpty();
+            if(!searchForShape) {
+                BlockPos pos = new BlockPos(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+                for(BlockPos portal : labyrinthPortalPositions) {
+                    if(portal.getY() < pos.getY()){
+                        pos = portal;
+                    }
+                }
+                exitPortalBasePos = pos.below();
+                if(!isValidPortalShape(inLevel, exitPortalBasePos, Direction.Axis.X)  && !isValidPortalShape(inLevel, exitPortalBasePos, Direction.Axis.Z)) {
+                    exitPortalBasePos = null;
+                    searchForShape = true;
+                }
+            }
+            if(searchForShape) {
+                for(BlockPos pos : barrierRockPositions) {
+                    if(isValidPortalShape(inLevel, pos, Direction.Axis.X) || isValidPortalShape(inLevel, pos, Direction.Axis.Z)) {
+                        exitPortalBasePos = pos;
+                        break;
+                    }
+                }
+                if(exitPortalBasePos == null){
+                    Constants.LOG.warn("Could not find any portals or barrier rocks in correct portal shape in area!");
+                    return null;
+                }
+            }
+            portalData.setPortalBaseForChunk(chunkAccess.getPos(), exitPortalBasePos);
+        }
+
+        Direction.Axis frameOrientation;
+        if(isValidPortalShape(inLevel, exitPortalBasePos, Direction.Axis.X)) {
+            frameOrientation = Direction.Axis.X;
+        }else if(isValidPortalShape(inLevel, exitPortalBasePos, Direction.Axis.Z)) {
+            frameOrientation = Direction.Axis.Z;
+        }else{
+            throw new IllegalStateException("Portal shape is invalid after existence verification!");
+        }
+
+        if(frameOrientation == Direction.Axis.X) {
+            BlockState portalState = MythBlocks.LABYRINTH_PORTAL.get().defaultBlockState().setValue(LabyrinthPortalBlock.AXIS, Direction.Axis.Z);
+            BlockPos.betweenClosed(exitPortalBasePos.relative(Direction.UP, 1), exitPortalBasePos.relative(Direction.UP, 2)).forEach((pos) -> inLevel.setBlock(pos, portalState, 18));
+        }else{
+            BlockState portalState = MythBlocks.LABYRINTH_PORTAL.get().defaultBlockState().setValue(LabyrinthPortalBlock.AXIS, Direction.Axis.X);
+            BlockPos.betweenClosed(exitPortalBasePos.relative(Direction.UP, 1), exitPortalBasePos.relative(Direction.UP, 2)).forEach((pos) -> inLevel.setBlock(pos, portalState, 18));
+        }
+
+        DimensionTransition.PostDimensionTransition postDimensionTransition = DimensionTransition.PLAY_PORTAL_SOUND.then(DimensionTransition.PLACE_PORTAL_TICKET);
+
+        return getDimensionTransitionFromExit(pEntity, entryPortalPos, exitPortalBasePos, inLevel, postDimensionTransition);
     }
 
-    private static DimensionTransition getDimensionTransitionFromExit(Entity pEntity, BlockPos pPos, BlockUtil.FoundRectangle pRectangle, ServerLevel pLevel, DimensionTransition.PostDimensionTransition pPostDimensionTransition) {
-        BlockState blockstate = pEntity.level().getBlockState(pPos);
-        Direction.Axis direction$axis;
-        Vec3 vec3;
+    private static DimensionTransition getDimensionTransitionFromExit(Entity pEntity, BlockPos entryPortalPos, BlockPos exitPortalBasePos, ServerLevel pLevel, DimensionTransition.PostDimensionTransition pPostDimensionTransition) {
+        BlockState blockstate = pEntity.level().getBlockState(entryPortalPos);
+        Direction.Axis direction;
         if (blockstate.hasProperty(BlockStateProperties.HORIZONTAL_AXIS)) {
-            direction$axis = blockstate.getValue(BlockStateProperties.HORIZONTAL_AXIS);
-            BlockUtil.FoundRectangle blockutil$foundrectangle = BlockUtil.getLargestRectangleAround(pPos, direction$axis, 21, Direction.Axis.Y, 21, (pos) -> pEntity.level().getBlockState(pos) == blockstate);
-            vec3 = pEntity.getRelativePortalPosition(direction$axis, blockutil$foundrectangle);
+            direction = blockstate.getValue(BlockStateProperties.HORIZONTAL_AXIS);
         } else {
-            direction$axis = Direction.Axis.X;
-            vec3 = new Vec3(0.5F, 0.0F, 0.0F);
+            direction = Direction.Axis.X;
         }
 
-        return createDimensionTransition(pLevel, pRectangle, direction$axis, vec3, pEntity, pEntity.getDeltaMovement(), pEntity.getYRot(), pEntity.getXRot(), pPostDimensionTransition);
+        return createDimensionTransition(pLevel, exitPortalBasePos, direction, pEntity, pEntity.getDeltaMovement(), pEntity.getYRot(), pEntity.getXRot(), pPostDimensionTransition);
     }
 
-    private static DimensionTransition createDimensionTransition(ServerLevel pLevel, BlockUtil.FoundRectangle pRectangle, Direction.Axis pAxis, Vec3 pOffset, Entity pEntity, Vec3 pSpeed, float pYRot, float pXRot, DimensionTransition.PostDimensionTransition pPostDimensionTransition) {
-        BlockPos blockpos = pRectangle.minCorner;
+    private static DimensionTransition createDimensionTransition(ServerLevel pLevel, BlockPos exitPortalBasePos, Direction.Axis pAxis, Entity pEntity, Vec3 pSpeed, float pYRot, float pXRot, DimensionTransition.PostDimensionTransition pPostDimensionTransition) {
+        BlockPos blockpos = exitPortalBasePos.above();
         BlockState blockstate = pLevel.getBlockState(blockpos);
         Direction.Axis direction$axis = blockstate.getOptionalValue(BlockStateProperties.HORIZONTAL_AXIS).orElse(Direction.Axis.X);
-        double d0 = pRectangle.axis1Size;
-        double d1 = pRectangle.axis2Size;
         EntityDimensions entitydimensions = pEntity.getDimensions(pEntity.getPose());
         int i = pAxis == direction$axis ? 0 : 90;
         Vec3 vec3 = pAxis == direction$axis ? pSpeed : new Vec3(pSpeed.z, pSpeed.y, -pSpeed.x);
-        double d2 = (double)entitydimensions.width() / (double)2.0F + (d0 - (double)entitydimensions.width()) * pOffset.x();
-        double d3 = (d1 - (double)entitydimensions.height()) * pOffset.y();
-        double d4 = (double)0.5F + pOffset.z();
+        double d2 = entitydimensions.width() / 2;
+        double d3 = 0;
+        double d4 = 0.5;
         boolean flag = direction$axis == Direction.Axis.X;
         Vec3 vec31 = new Vec3((double)blockpos.getX() + (flag ? d2 : d4), (double)blockpos.getY() + d3, (double)blockpos.getZ() + (flag ? d4 : d2));
         Vec3 vec32 = PortalShape.findCollisionFreePosition(vec31, pLevel, pEntity, entitydimensions);
         return new DimensionTransition(pLevel, vec32, vec3, pYRot + (float)i, pXRot, pPostDimensionTransition);
+    }
+
+    public static boolean isValidPortalShape(Level level, BlockPos basePos, Direction.Axis axis) {
+        for(int x = basePos.getX() - (axis == Direction.Axis.X ? 0 : 1); x <= basePos.getX() + (axis == Direction.Axis.X ? 0 : 1); x++) {
+            for(int y = basePos.getY(); y <= basePos.getY() + 3; y++) {
+                for(int z = basePos.getZ() - (axis == Direction.Axis.Z ? 0 : 1); z <= basePos.getZ() + (axis == Direction.Axis.Z ? 0 : 1); z++) {
+                    BlockPos pos = new BlockPos(x, y, z);
+                    if(x == basePos.getX() && z == basePos.getZ() && (y == basePos.getY() + 1 || y == basePos.getY() + 2)) {
+                        if(!level.getBlockState(pos).is(Blocks.AIR) && !level.getBlockState(pos).is(MythBlocks.LABYRINTH_PORTAL.get())) {
+                            return false;
+                        }
+                    }else{
+                        if(!level.getBlockState(pos).is(MythBlocks.LABYRINTH_BARRIER_ROCK.get())) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     @Override
