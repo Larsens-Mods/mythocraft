@@ -41,7 +41,7 @@ public class MythStructures {
                                 )
                         ),
                         GenerationStep.Decoration.SURFACE_STRUCTURES,
-                        TerrainAdjustment.NONE
+                        TerrainAdjustment.BEARD_THIN
                 ),
                 structureTemplatePoolHolderGetter.getOrThrow(MythocraftStructureTemplatePools.GREEK_TEMPLE),
                 1,
@@ -54,7 +54,7 @@ public class MythStructures {
                         biomeHolderGetter.getOrThrow(MythocraftBiomeTags.HAS_CYCLOPS_CAVE),
                         Map.of(),
                         GenerationStep.Decoration.SURFACE_STRUCTURES,
-                        TerrainAdjustment.NONE
+                        TerrainAdjustment.BEARD_THIN
                 ),
                 structureTemplatePoolHolderGetter.getOrThrow(MythocraftStructureTemplatePools.CYCLOPS_CAVE),
                 2,
@@ -67,7 +67,7 @@ public class MythStructures {
                         biomeHolderGetter.getOrThrow(MythocraftBiomeTags.HAS_CYCLOPS_FORGE),
                         Map.of(),
                         GenerationStep.Decoration.SURFACE_STRUCTURES,
-                        TerrainAdjustment.NONE
+                        TerrainAdjustment.BEARD_THIN
                 ),
                 structureTemplatePoolHolderGetter.getOrThrow(MythocraftStructureTemplatePools.CYCLOPS_FORGE),
                 1,

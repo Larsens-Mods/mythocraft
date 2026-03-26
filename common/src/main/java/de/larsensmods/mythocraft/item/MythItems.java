@@ -21,6 +21,7 @@ public class MythItems {
 
     public static Supplier<Item> AMBROSIA;
     public static Supplier<Item> NEMEAN_LION_PELT;
+    public static Supplier<Item> MINOTAUR_HORN;
 
     public static Supplier<Item> NEMEAN_COAT;
     public static Supplier<Item> HADES_HELM;
@@ -36,6 +37,7 @@ public class MythItems {
     public static void registerItems(){
         AMBROSIA = ITEMS.register("ambrosia", () -> new AmbrosiaItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(20).saturationModifier(0.5f).alwaysEdible().effect(new MobEffectInstance(MobEffects.REGENERATION, 200, 2), 1f).build())));
         NEMEAN_LION_PELT = ITEMS.register("nemean_lion_pelt", () -> new Item(new Item.Properties()));
+        MINOTAUR_HORN = ITEMS.register("minotaur_horn", () -> new Item(new Item.Properties()));
 
         NEMEAN_COAT = ITEMS.register("nemean_coat", () -> new ArmorItem(MythArmorMaterials.NEMEAN, ArmorItem.Type.CHESTPLATE, new Item.Properties().durability(500)));
         HADES_HELM = ITEMS.register("hades_helm", () -> new ArmorItem(MythArmorMaterials.HADES, ArmorItem.Type.HELMET, new Item.Properties().durability(450)));

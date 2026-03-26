@@ -22,6 +22,7 @@ public class MythCreativeTabs {
                 .displayItems((params, output) -> {
                     output.accept(MythItems.AMBROSIA.get());
                     output.accept(MythItems.NEMEAN_LION_PELT.get());
+                    output.accept(MythItems.MINOTAUR_HORN.get());
 
                     output.accept(MythItems.NEMEAN_COAT.get());
                     output.accept(MythItems.HADES_HELM.get());
