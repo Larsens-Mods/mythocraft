@@ -16,12 +16,14 @@
   "item.mythocraft.nemean_lion_spawn_egg": "Nemean Lion Spawn Egg",
   "item.mythocraft.cyclops_spawn_egg": "Cyclops Spawn Egg",
   "item.mythocraft.blacksmith_cyclops_spawn_egg": "Blacksmith Cyclops Spawn Egg",
+  "item.mythocraft.minotaur_spawn_egg": "Minotaur Spawn Egg",
 
   "entity.mythocraft.satyr": "Satyr",
   "entity.mythocraft.nemean_lion": "Nemean Lion",
   "entity.mythocraft.pegasus": "Pegasus",
   "entity.mythocraft.cyclops": "Cyclops",
   "entity.mythocraft.blacksmith_cyclops": "Blacksmith Cyclops",
+  "entity.mythocraft.minotaur": "Minotaur",
 
   "itemGroup.mythocraft.myth_items": "Mythocraft Items"
 }

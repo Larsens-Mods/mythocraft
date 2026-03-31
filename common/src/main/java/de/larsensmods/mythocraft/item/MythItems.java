@@ -33,6 +33,7 @@ public class MythItems {
     public static Supplier<Item> NEMEAN_LION_SPAWN_EGG;
     public static Supplier<Item> CYCLOPS_SPAWN_EGG;
     public static Supplier<Item> BLACKSMITH_CYCLOPS_SPAWN_EGG;
+    public static Supplier<Item> MINOTAUR_SPAWN_EGG;
 
     public static void registerItems(){
         AMBROSIA = ITEMS.register("ambrosia", () -> new AmbrosiaItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(20).saturationModifier(0.5f).alwaysEdible().effect(new MobEffectInstance(MobEffects.REGENERATION, 200, 2), 1f).build())));
@@ -49,6 +50,7 @@ public class MythItems {
         NEMEAN_LION_SPAWN_EGG = ITEMS.register("nemean_lion_spawn_egg", () -> new WrappedSpawnEggItem(MythEntities.NEMEAN_LION, 0xDEA765, 0xB87B32, new Item.Properties()));
         CYCLOPS_SPAWN_EGG = ITEMS.register("cyclops_spawn_egg", () -> new WrappedSpawnEggItem(MythEntities.CYCLOPS, 0xCFB198, 0x00AEF9, new Item.Properties()));
         BLACKSMITH_CYCLOPS_SPAWN_EGG = ITEMS.register("blacksmith_cyclops_spawn_egg", () -> new WrappedSpawnEggItem(MythEntities.BLACKSMITH_CYCLOPS, 0xCFB198, 0x23C700, new Item.Properties()));
+        MINOTAUR_SPAWN_EGG = ITEMS.register("minotaur_spawn_egg", () -> new WrappedSpawnEggItem(MythEntities.MINOTAUR, 0xBFAE9B, 0x7A4F3C, new Item.Properties())); //TODO: SPAWN EGG COLORS
 
         ITEMS.register();
     }

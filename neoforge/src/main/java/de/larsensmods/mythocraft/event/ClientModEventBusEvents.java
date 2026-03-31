@@ -2,6 +2,7 @@ package de.larsensmods.mythocraft.event;
 
 import de.larsensmods.mythocraft.Constants;
 import de.larsensmods.mythocraft.entity.MythEntities;
+import de.larsensmods.mythocraft.entity.client.MinotaurRenderer;
 import de.larsensmods.mythocraft.entity.client.NemeanLionRenderer;
 import de.larsensmods.mythocraft.entity.client.PegasusRenderer;
 import de.larsensmods.mythocraft.entity.client.SatyrRenderer;
@@ -23,6 +24,7 @@ public class ClientModEventBusEvents {
         EntityRenderers.register(MythEntities.NEMEAN_LION.get(), NemeanLionRenderer::new);
         EntityRenderers.register(MythEntities.CYCLOPS.get(), CyclopsRenderer::new);
         EntityRenderers.register(MythEntities.BLACKSMITH_CYCLOPS.get(), BlacksmithCyclopsRenderer::new);
+        EntityRenderers.register(MythEntities.MINOTAUR.get(), MinotaurRenderer::new);
     }
 
 }

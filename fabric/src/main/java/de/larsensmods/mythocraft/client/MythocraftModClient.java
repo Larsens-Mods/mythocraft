@@ -30,6 +30,7 @@ public class MythocraftModClient implements ClientModInitializer {
         EntityRendererRegistry.register(MythEntities.NEMEAN_LION.get(), NemeanLionRenderer::new);
         EntityRendererRegistry.register(MythEntities.CYCLOPS.get(), CyclopsRenderer::new);
         EntityRendererRegistry.register(MythEntities.BLACKSMITH_CYCLOPS.get(), BlacksmithCyclopsRenderer::new);
+        EntityRendererRegistry.register(MythEntities.MINOTAUR.get(), MinotaurRenderer::new);
     }
 
     private void registerEntityModelLayers(){
@@ -38,6 +39,7 @@ public class MythocraftModClient implements ClientModInitializer {
         EntityModelLayerRegistry.registerModelLayer(NemeanLionModel.LAYER_LOCATION, NemeanLionModel::createBodyLayer);
         EntityModelLayerRegistry.registerModelLayer(CyclopsModel.LAYER_LOCATION, CyclopsModel::createBodyLayer);
         EntityModelLayerRegistry.registerModelLayer(BlacksmithCyclopsModel.LAYER_LOCATION, BlacksmithCyclopsModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(MinotaurModel.LAYER_LOCATION, MinotaurModel::createBodyLayer);
     }
 
     private void updateBlockRenderLayers(){

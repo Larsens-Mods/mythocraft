@@ -8,6 +8,7 @@ import de.larsensmods.mythocraft.entity.friendly.BlacksmithCyclopsEntity;
 import de.larsensmods.mythocraft.entity.friendly.PegasusEntity;
 import de.larsensmods.mythocraft.entity.friendly.SatyrEntity;
 import de.larsensmods.mythocraft.entity.monster.CyclopsEntity;
+import de.larsensmods.mythocraft.entity.monster.MinotaurEntity;
 import de.larsensmods.mythocraft.entity.monster.NemeanLionEntity;
 import de.larsensmods.mythocraft.item.MythArmorMaterials;
 import de.larsensmods.mythocraft.item.MythCreativeTabs;
@@ -51,6 +52,7 @@ public class CommonClass {
         AttributeRegistry.register(MythEntities.NEMEAN_LION, () -> NemeanLionEntity.createAttributes().build());
         AttributeRegistry.register(MythEntities.CYCLOPS, () -> CyclopsEntity.createAttributes().build());
         AttributeRegistry.register(MythEntities.BLACKSMITH_CYCLOPS, () -> BlacksmithCyclopsEntity.createAttributes().build());
+        AttributeRegistry.register(MythEntities.MINOTAUR, () -> MinotaurEntity.createAttributes().build());
     }
 
     private static void registerSpawnPlacements(){
@@ -59,5 +61,6 @@ public class CommonClass {
         SpawnPlacementsRegistry.register(MythEntities.NEMEAN_LION, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NemeanLionEntity::checkAnyLightMonsterSpawnRules);
         SpawnPlacementsRegistry.register(MythEntities.CYCLOPS, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CyclopsEntity::checkAnyLightMonsterSpawnRules);
         SpawnPlacementsRegistry.register(MythEntities.BLACKSMITH_CYCLOPS, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlacksmithCyclopsEntity::checkMobSpawnRules);
+        SpawnPlacementsRegistry.register(MythEntities.MINOTAUR, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MinotaurEntity::checkAnyLightMonsterSpawnRules);
     }
 }

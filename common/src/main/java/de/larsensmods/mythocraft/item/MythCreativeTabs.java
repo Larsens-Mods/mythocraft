@@ -32,6 +32,7 @@ public class MythCreativeTabs {
                     output.accept(MythItems.SATYR_SPAWN_EGG.get());
                     output.accept(MythItems.PEGASUS_SPAWN_EGG.get());
                     output.accept(MythItems.NEMEAN_LION_SPAWN_EGG.get());
+                    output.accept(MythItems.MINOTAUR_SPAWN_EGG.get());
                     output.accept(MythItems.CYCLOPS_SPAWN_EGG.get());
                     output.accept(MythItems.BLACKSMITH_CYCLOPS_SPAWN_EGG.get());
                 })
