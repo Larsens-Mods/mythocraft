@@ -16,8 +16,8 @@ public class MythocraftStructureTagProvider extends StructureTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider wrapperLookup) {
-        tag(MythocraftStructureTags.IS_LABYRINTH_PORTAL)
-                .add(MythocraftStructures.LABYRINTH_PORTAL, MythocraftStructures.LABYRINTH_PORTAL_SANDSTONE);
+        /*tag(MythocraftStructureTags.IS_LABYRINTH_PORTAL)
+                .add(MythocraftStructures.LABYRINTH_PORTAL, MythocraftStructures.LABYRINTH_PORTAL_SANDSTONE);*/
     }
 
 }

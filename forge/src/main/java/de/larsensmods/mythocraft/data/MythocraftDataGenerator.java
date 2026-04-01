@@ -23,8 +23,8 @@ public class MythocraftDataGenerator {
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
         //Models
-        generator.addProvider(event.includeClient(), new MythocraftItemModelProvider(packOutput, existingFileHelper));
         generator.addProvider(event.includeClient(), new MythocraftBlockStateProvider(packOutput, existingFileHelper));
+        generator.addProvider(event.includeClient(), new MythocraftItemModelProvider(packOutput, existingFileHelper));
 
         //Datapack
         generator.addProvider(event.includeServer(), new MythocraftDatapackEntries(packOutput, lookupProvider));

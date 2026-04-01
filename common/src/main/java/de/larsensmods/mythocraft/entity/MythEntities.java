@@ -46,6 +46,7 @@ public class MythEntities {
                 SATYR,
                 PEGASUS,
                 NEMEAN_LION,
+                MINOTAUR,
                 CYCLOPS,
                 BLACKSMITH_CYCLOPS
         );

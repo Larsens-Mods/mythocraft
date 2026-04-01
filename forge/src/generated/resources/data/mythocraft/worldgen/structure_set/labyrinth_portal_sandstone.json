@@ -1,0 +1,14 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 35592772,
+    "separation": 16,
+    "spacing": 32
+  },
+  "structures": [
+    {
+      "structure": "mythocraft:labyrinth_portal_sandstone",
+      "weight": 1
+    }
+  ]
+}

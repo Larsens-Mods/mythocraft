@@ -14,6 +14,6 @@ public class MythocraftBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        cubeAll(MythBlocks.LABYRINTH_BARRIER_ROCK.get());
+        simpleBlock(MythBlocks.LABYRINTH_BARRIER_ROCK.get());
     }
 }

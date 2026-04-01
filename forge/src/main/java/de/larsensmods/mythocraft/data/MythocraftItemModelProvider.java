@@ -2,6 +2,7 @@ package de.larsensmods.mythocraft.data;
 
 import de.larsensmods.mythocraft.Constants;
 import de.larsensmods.mythocraft.item.MythItems;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -29,6 +30,8 @@ public class MythocraftItemModelProvider extends ItemModelProvider {
         withExistingParent(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(MythItems.CYCLOPS_SPAWN_EGG.get())).getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(MythItems.BLACKSMITH_CYCLOPS_SPAWN_EGG.get())).getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(MythItems.MINOTAUR_SPAWN_EGG.get())).getPath(), mcLoc("item/template_spawn_egg"));
+
+        withExistingParent(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(MythItems.LABYRINTH_BARRIER_ROCK.get())).getPath(), modLoc("block/labyrinth_barrier_rock"));
     }
 
 }
