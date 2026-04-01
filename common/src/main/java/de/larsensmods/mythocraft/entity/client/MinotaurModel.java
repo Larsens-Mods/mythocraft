@@ -41,14 +41,14 @@ public class MinotaurModel<T extends MinotaurEntity> extends HierarchicalModel<T
                 .texOffs(0, 0).addBox(-6.5F, -23.0F, -3.5F, 13.0F, 6.0F, 7.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 25).addBox(-6.0F, -13.0F, -3.0F, 12.0F, 4.0F, 6.0F, new CubeDeformation(0.1F)), PartPose.offset(0.0F, 24.0F, 0.0F));
 
-        PartDefinition head = body.addOrReplaceChild("head", CubeListBuilder.create().texOffs(52, 32).addBox(-4.0F, -30.0F, -5.0F, 8.0F, 8.0F, 7.0F, new CubeDeformation(0.0F))
-                .texOffs(59, 47).addBox(-2.0F, -26.0F, -9.0F, 4.0F, 4.0F, 4.0F, new CubeDeformation(0.0F))
-                .texOffs(75, 32).addBox(3.0F, -31.0F, -5.1F, 4.0F, 3.0F, 4.0F, new CubeDeformation(0.0F))
-                .texOffs(43, 32).mirror().addBox(-7.0F, -31.0F, -5.1F, 4.0F, 3.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false)
-                .texOffs(76, 25).addBox(5.0F, -31.0F, -10.1F, 2.0F, 2.0F, 5.0F, new CubeDeformation(0.0F))
-                .texOffs(44, 25).mirror().addBox(-7.0F, -31.0F, -10.1F, 2.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition head = body.addOrReplaceChild("head", CubeListBuilder.create().texOffs(52, 32).addBox(-4.0F, -7.5698F, -2.3963F, 8.0F, 8.0F, 7.0F, new CubeDeformation(0.0F))
+                .texOffs(59, 47).addBox(-2.0F, -3.5698F, -6.3963F, 4.0F, 4.0F, 4.0F, new CubeDeformation(0.0F))
+                .texOffs(75, 32).addBox(3.0F, -8.5698F, -2.4963F, 4.0F, 3.0F, 4.0F, new CubeDeformation(0.0F))
+                .texOffs(43, 32).mirror().addBox(-7.0F, -8.5698F, -2.4963F, 4.0F, 3.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false)
+                .texOffs(76, 25).addBox(5.0F, -8.5698F, -7.4963F, 2.0F, 2.0F, 5.0F, new CubeDeformation(0.0F))
+                .texOffs(44, 25).mirror().addBox(-7.0F, -8.5698F, -7.4963F, 2.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(0.0F, -22.4302F, -2.6037F));
 
-        PartDefinition bullring_r1 = head.addOrReplaceChild("bullring_r1", CubeListBuilder.create().texOffs(64, 55).addBox(-1.5F, -1.2786F, -0.1443F, 3.0F, 3.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -23.2214F, -9.2557F, -0.3491F, 0.0F, 0.0F));
+        PartDefinition bullring_r1 = head.addOrReplaceChild("bullring_r1", CubeListBuilder.create().texOffs(64, 55).addBox(-1.5F, -1.2786F, 0.0056F, 3.0F, 3.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -0.7912F, -6.6519F, -0.3491F, 0.0F, 0.0F));
 
         PartDefinition left_leg = body.addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(20, 35).mirror().addBox(-2.5F, -0.5F, -2.5F, 5.0F, 11.0F, 5.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(3.5F, -10.5F, 0.0F));
 

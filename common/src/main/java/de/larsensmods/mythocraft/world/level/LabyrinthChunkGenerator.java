@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.larsensmods.mythocraft.Constants;
+import de.larsensmods.mythocraft.data.MythLevels;
 import de.larsensmods.mythocraft.data.MythocraftStructures;
 import de.larsensmods.mythocraft.world.level.util.LabyrinthUtilFunctions;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
@@ -12,9 +13,14 @@ import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.DoubleTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.biome.FixedBiomeSource;
@@ -40,6 +46,7 @@ import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -98,6 +105,7 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
             return;
         }
         ServerLevel overworld = level.getServer().overworld();
+        ServerLevel labyrinthServerLevel = level.getServer().getLevel(MythLevels.LABYRINTH);
         Registry<Structure> structureRegistry = overworld.registryAccess().registryOrThrow(Registries.STRUCTURE);
 
         StructureTemplateManager structureTemplateManager = level.getServer().getStructureManager();
@@ -162,6 +170,34 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
                         if(level.getBlockEntity(pos) != null && blockInfo.nbt() != null){
                             Objects.requireNonNull(level.getBlockEntity(pos)).loadWithComponents(blockInfo.nbt(), level.registryAccess());
                         }
+                    }
+                }
+                if(labyrinthServerLevel == null){
+                    Constants.LOG.warn("Could not spawn entities, labyrinthServerLevel is null!");
+                    return;
+                }
+                for(StructureTemplate.StructureEntityInfo entityInfo : structure.entityInfoList){
+                    Vec3 spawnPos = entityInfo.pos;
+                    switch(rotation){
+                        case CLOCKWISE_90 -> spawnPos = new Vec3(16 - spawnPos.z, spawnPos.y, spawnPos.x);
+                        case CLOCKWISE_180 -> spawnPos = new Vec3(16 - spawnPos.x, spawnPos.y, 16 - spawnPos.z);
+                        case COUNTERCLOCKWISE_90 -> spawnPos = new Vec3(spawnPos.z, spawnPos.y, 16 - spawnPos.x);
+                    }
+                    CompoundTag entityData = entityInfo.nbt;
+                    String entityID = entityData.getString("id");
+                    EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.tryParse(entityID));
+                    Entity entity = type.spawn(labyrinthServerLevel, new BlockPos((int) (spawnPos.x + chunk.getPos().getMinBlockX()), (int) (spawnPos.y + baseY), (int) (spawnPos.z + chunk.getPos().getMinBlockZ())), MobSpawnType.STRUCTURE);
+                    if(entity != null) {
+                        entityData.putUUID("UUID", entity.getUUID());
+                        ListTag pos = entityData.getList("Pos", ListTag.TAG_DOUBLE);
+                        pos.set(0, DoubleTag.valueOf(entity.position().x));
+                        pos.set(1, DoubleTag.valueOf(entity.position().y));
+                        pos.set(2, DoubleTag.valueOf(entity.position().z));
+                        entityData.put("Pos", pos);
+                        entity.load(entityData);
+                        Constants.LOG.debug("Spawned entity of type {} with id {} at {}", entity.getType(), entity.getStringUUID(), entity.position());
+                    }else{
+                        Constants.LOG.warn("Failed to spawn entity of type {} at position {}", entityID, spawnPos);
                     }
                 }
             }
