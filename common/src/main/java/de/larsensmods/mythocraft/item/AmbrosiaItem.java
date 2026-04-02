@@ -46,6 +46,7 @@ public class AmbrosiaItem extends Item {
                     BlockPos.betweenClosed(blockpos.relative(Direction.UP, 1), blockpos.relative(Direction.UP, 2)).forEach((pos) -> level.setBlock(pos, portalState, 18));
                 }
                 if(validPortal){
+                    Constants.LOG.debug("Valid Portal created at {}, doing dimensional pre-gen", blockpos);
                     preGenOtherDim(blockpos, level, player);
                 }
             }
@@ -65,12 +66,15 @@ public class AmbrosiaItem extends Item {
             BlockPos overworldMin = new BlockPos((int) (portalChunkPos.getMinBlockX() * teleportScale), overworld.getMinBuildHeight(), (int) (portalChunkPos.getMinBlockZ() * teleportScale));
             BlockPos overworldMax = new BlockPos((int) (portalChunkPos.getMaxBlockX() * teleportScale), overworld.getMaxBuildHeight(), (int) (portalChunkPos.getMaxBlockZ() * teleportScale));
 
+            Constants.LOG.debug("Pre-generating overworld chunks in range {} to {}", overworldMin, overworldMax);
             ChunkPos.rangeClosed(overworld.getChunk(overworldMin).getPos(), overworld.getChunk(overworldMax).getPos()).forEach((pos) -> overworld.getChunkSource().addRegionTicket(TicketType.UNKNOWN, pos, 1, pos));
         }else{
             ServerLevel labyrinth = Objects.requireNonNull(server.getLevel(MythLevels.LABYRINTH));
             WorldBorder border = labyrinth.getWorldBorder();
             double teleportScale = DimensionType.getTeleportationScale(usedInLevel.dimensionType(), labyrinth.dimensionType());
             BlockPos resultingPos = border.clampToBounds(portalBasePos.getX() * teleportScale, portalBasePos.getY(), portalBasePos.getZ() * teleportScale);
+
+            Constants.LOG.debug("Pre-generating labyrinth chunks around {}", resultingPos);
             labyrinth.getChunkSource().addRegionTicket(TicketType.UNKNOWN, labyrinth.getChunk(resultingPos).getPos(), 1, labyrinth.getChunk(resultingPos).getPos());
         }
     }

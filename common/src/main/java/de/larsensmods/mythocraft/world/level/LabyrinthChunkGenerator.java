@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.larsensmods.mythocraft.Constants;
 import de.larsensmods.mythocraft.data.MythLevels;
 import de.larsensmods.mythocraft.data.MythocraftStructures;
+import de.larsensmods.mythocraft.world.level.data.LevelBossSpawnData;
 import de.larsensmods.mythocraft.world.level.util.LabyrinthUtilFunctions;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
@@ -13,8 +14,6 @@ import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
@@ -27,9 +26,6 @@ import net.minecraft.world.level.biome.FixedBiomeSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.level.block.entity.TrappedChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -152,6 +148,8 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
                     : TILE_MAPPINGS.get(tileShape)[LabyrinthUtilFunctions.getTileVariant(seed, chunk.getPos().x, chunk.getPos().z, TILE_MAPPINGS.get(tileShape).length)];
         }
 
+        Constants.LOG.debug("Chunk {}: Calculated tile type {} and shape {}, using structure {}", chunk.getPos(), tileType, tileShape, tileStructure);
+
         if(tileStructure != null){
             StructureTemplate structure = structureTemplateManager.get(tileStructure).orElse(null);
             if(structure != null){
@@ -172,6 +170,7 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
                         }
                     }
                 }
+                Constants.LOG.debug("Chunk {}: Placed structure blocks for {}", chunk.getPos(), tileStructure);
                 if(labyrinthServerLevel == null){
                     Constants.LOG.warn("Could not spawn entities, labyrinthServerLevel is null!");
                     return;
@@ -184,22 +183,11 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
                         case COUNTERCLOCKWISE_90 -> spawnPos = new Vec3(spawnPos.z, spawnPos.y, 16 - spawnPos.x);
                     }
                     CompoundTag entityData = entityInfo.nbt;
-                    String entityID = entityData.getString("id");
-                    EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.tryParse(entityID));
-                    Entity entity = type.spawn(labyrinthServerLevel, new BlockPos((int) (spawnPos.x + chunk.getPos().getMinBlockX()), (int) (spawnPos.y + baseY), (int) (spawnPos.z + chunk.getPos().getMinBlockZ())), MobSpawnType.STRUCTURE);
-                    if(entity != null) {
-                        entityData.putUUID("UUID", entity.getUUID());
-                        ListTag pos = entityData.getList("Pos", ListTag.TAG_DOUBLE);
-                        pos.set(0, DoubleTag.valueOf(entity.position().x));
-                        pos.set(1, DoubleTag.valueOf(entity.position().y));
-                        pos.set(2, DoubleTag.valueOf(entity.position().z));
-                        entityData.put("Pos", pos);
-                        entity.load(entityData);
-                        Constants.LOG.debug("Spawned entity of type {} with id {} at {}", entity.getType(), entity.getStringUUID(), entity.position());
-                    }else{
-                        Constants.LOG.warn("Failed to spawn entity of type {} at position {}", entityID, spawnPos);
-                    }
+                    LevelBossSpawnData spawnerData = labyrinthServerLevel.getDataStorage().computeIfAbsent(LevelBossSpawnData.factory(), LevelBossSpawnData.NAME);
+                    spawnerData.addBossSpawner(new BlockPos((int) (spawnPos.x + chunk.getPos().getMinBlockX()), (int) (spawnPos.y + baseY), (int) (spawnPos.z + chunk.getPos().getMinBlockZ())), entityData);
+                    Constants.LOG.debug("Added entity spawn data for chunk");
                 }
+                Constants.LOG.debug("Finished generating chunk {}", chunk.getPos());
             }
         }
     }
@@ -295,7 +283,40 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
     public void buildSurface(@NotNull WorldGenRegion worldGenRegion, @NotNull StructureManager structureManager, @NotNull RandomState randomState, @NotNull ChunkAccess chunkAccess) {}
 
     @Override
-    public void spawnOriginalMobs(@NotNull WorldGenRegion worldGenRegion) {}
+    public void spawnOriginalMobs(@NotNull WorldGenRegion worldGenRegion) {
+        Constants.LOG.debug("SpawnOriginalMobs with center {}", worldGenRegion.getCenter());
+        if(worldGenRegion.getServer() == null || worldGenRegion.getServer().getLevel(MythLevels.LABYRINTH) == null){
+            return;
+        }
+        ServerLevel labyrinthServerLevel = worldGenRegion.getServer().getLevel(MythLevels.LABYRINTH);
+        LevelBossSpawnData spawnerData = Objects.requireNonNull(labyrinthServerLevel).getDataStorage().computeIfAbsent(LevelBossSpawnData.factory(), LevelBossSpawnData.NAME);
+
+        Map<Long, CompoundTag> openEntities = spawnerData.getOpenSpawners();
+        for(Map.Entry<Long, CompoundTag> entry : openEntities.entrySet()){
+            BlockPos spawnPos = BlockPos.of(entry.getKey());
+            if(spawnPos.distSqr(worldGenRegion.getCenter().getMiddleBlockPosition(spawnPos.getY())) <= 4096){
+                CompoundTag entityData = entry.getValue();
+                String entityID = entityData.getString("id");
+                EntityType<? extends Entity> type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.tryParse(entityID));
+                Constants.LOG.debug("Spawning entity of type {} at {}", type, spawnPos);
+                Entity entity = type.spawn(labyrinthServerLevel, spawnEntity -> {
+                    Constants.LOG.debug("Applying persistence");
+                    CompoundTag spawnData = spawnEntity.saveWithoutId(new CompoundTag());
+                    //Constants.LOG.debug("After copy");
+                    spawnData.putByte("PersistenceRequired", (byte) 1);
+                    //Constants.LOG.debug("After set");
+                    spawnEntity.load(spawnData);
+                    //Constants.LOG.debug("After apply");
+                }, spawnPos, MobSpawnType.STRUCTURE, false, false);
+                if(entity != null) {
+                    Constants.LOG.debug("Spawned entity of type {} with id {} at {}", entity.getType(), entity.getStringUUID(), entity.position());
+                }else{
+                    Constants.LOG.warn("Failed to spawn entity of type {} at position {}", entityID, spawnPos);
+                }
+                spawnerData.doneSpawning(entry.getKey());
+            }
+        }
+    }
 
     @Override
     public int getGenDepth() {
@@ -319,6 +340,7 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
                 }
             }
         }
+        Constants.LOG.debug("Chunk {}: Filled floor", chunkAccess.getPos());
         return CompletableFuture.completedFuture(chunkAccess);
     }
 

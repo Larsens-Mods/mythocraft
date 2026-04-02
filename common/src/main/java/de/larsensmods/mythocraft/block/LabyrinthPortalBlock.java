@@ -175,10 +175,10 @@ public class LabyrinthPortalBlock extends Block implements Portal {
 
         if(frameOrientation == Direction.Axis.X) {
             BlockState portalState = MythBlocks.LABYRINTH_PORTAL.get().defaultBlockState().setValue(LabyrinthPortalBlock.AXIS, Direction.Axis.Z);
-            BlockPos.betweenClosed(exitPortalBasePos.relative(Direction.UP, 1), exitPortalBasePos.relative(Direction.UP, 2)).forEach((pos) -> inLevel.setBlock(pos, portalState, 18));
+            BlockPos.betweenClosed(exitPortalBasePos.relative(Direction.UP, 1), exitPortalBasePos.relative(Direction.UP, 2)).forEach((pos) -> inLevel.setBlock(pos, portalState, Block.UPDATE_CLIENTS | Block.UPDATE_IMMEDIATE));
         }else{
             BlockState portalState = MythBlocks.LABYRINTH_PORTAL.get().defaultBlockState().setValue(LabyrinthPortalBlock.AXIS, Direction.Axis.X);
-            BlockPos.betweenClosed(exitPortalBasePos.relative(Direction.UP, 1), exitPortalBasePos.relative(Direction.UP, 2)).forEach((pos) -> inLevel.setBlock(pos, portalState, 18));
+            BlockPos.betweenClosed(exitPortalBasePos.relative(Direction.UP, 1), exitPortalBasePos.relative(Direction.UP, 2)).forEach((pos) -> inLevel.setBlock(pos, portalState, Block.UPDATE_CLIENTS | Block.UPDATE_IMMEDIATE));
         }
 
         DimensionTransition.PostDimensionTransition postDimensionTransition = DimensionTransition.PLAY_PORTAL_SOUND.then(DimensionTransition.PLACE_PORTAL_TICKET);
