@@ -24,6 +24,7 @@ public class MythocraftDataGenerator {
 
         //Models
         generator.addProvider(true /*event.includeClient()*/, new MythocraftItemModelProvider(packOutput, existingFileHelper));
+        generator.addProvider(true /*event.includeClient()*/, new MythocraftBlockStateProvider(packOutput, existingFileHelper));
 
         //Datapack
         generator.addProvider(true /*event.includeServer()*/, new MythocraftDatapackEntries(packOutput, lookupProvider));
@@ -37,6 +38,7 @@ public class MythocraftDataGenerator {
         //Tags
         generator.addProvider(true /*event.includeServer()*/, new MythocraftBiomeTagProvider(packOutput, lookupProvider));
         generator.addProvider(true /*event.includeServer()*/, new MythocraftBlockTagProvider(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(true /*event.includeServer()*/, new MythocraftStructureTagProvider(packOutput, lookupProvider, existingFileHelper));
     }
 
 }

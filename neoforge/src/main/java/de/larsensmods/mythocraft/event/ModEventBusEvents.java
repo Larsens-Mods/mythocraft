@@ -1,6 +1,7 @@
 package de.larsensmods.mythocraft.event;
 
 import de.larsensmods.mythocraft.Constants;
+import de.larsensmods.mythocraft.entity.client.MinotaurModel;
 import de.larsensmods.mythocraft.entity.client.NemeanLionModel;
 import de.larsensmods.mythocraft.entity.client.PegasusModel;
 import de.larsensmods.mythocraft.entity.client.SatyrModel;
@@ -20,6 +21,7 @@ public class ModEventBusEvents {
         event.registerLayerDefinition(NemeanLionModel.LAYER_LOCATION, NemeanLionModel::createBodyLayer);
         event.registerLayerDefinition(CyclopsModel.LAYER_LOCATION, CyclopsModel::createBodyLayer);
         event.registerLayerDefinition(BlacksmithCyclopsModel.LAYER_LOCATION, BlacksmithCyclopsModel::createBodyLayer);
+        event.registerLayerDefinition(MinotaurModel.LAYER_LOCATION, MinotaurModel::createBodyLayer);
     }
 
 }

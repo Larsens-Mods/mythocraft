@@ -33,6 +33,20 @@ public class MythStructureSets {
                         32, 16, RandomSpreadType.LINEAR, 98765432
                 )
         ));
+
+        //LABYRINTH PORTALS
+        structureSetBootstrapContext.register(MythocraftStructureSets.LABYRINTH_PORTAL, new StructureSet(
+                structureHolderGetter.getOrThrow(MythocraftStructures.LABYRINTH_PORTAL),
+                new RandomSpreadStructurePlacement(
+                        32, 16, RandomSpreadType.LINEAR, 72355927
+                )
+        ));
+        structureSetBootstrapContext.register(MythocraftStructureSets.LABYRINTH_PORTAL_SANDSTONE, new StructureSet(
+                structureHolderGetter.getOrThrow(MythocraftStructures.LABYRINTH_PORTAL_SANDSTONE),
+                new RandomSpreadStructurePlacement(
+                        32, 16, RandomSpreadType.LINEAR, 35592772
+                )
+        ));
     }
 
 }

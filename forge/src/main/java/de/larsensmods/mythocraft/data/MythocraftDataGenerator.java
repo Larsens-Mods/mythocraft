@@ -23,6 +23,7 @@ public class MythocraftDataGenerator {
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
         //Models
+        generator.addProvider(event.includeClient(), new MythocraftBlockStateProvider(packOutput, existingFileHelper));
         generator.addProvider(event.includeClient(), new MythocraftItemModelProvider(packOutput, existingFileHelper));
 
         //Datapack
@@ -37,6 +38,7 @@ public class MythocraftDataGenerator {
         //Tags
         generator.addProvider(event.includeServer(), new MythocraftBiomeTagProvider(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new MythocraftBlockTagProvider(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(event.includeServer(), new MythocraftStructureTagProvider(packOutput, lookupProvider, existingFileHelper));
     }
 
 }

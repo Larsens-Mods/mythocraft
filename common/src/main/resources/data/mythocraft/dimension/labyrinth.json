@@ -1,0 +1,9 @@
+{
+  "type": "mythocraft:labyrinth",
+  "generator": {
+    "type": "mythocraft:labyrinth",
+    "settings": {
+      "biome": "mythocraft:labyrinth"
+    }
+  }
+}

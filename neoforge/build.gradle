@@ -21,6 +21,7 @@ neoForge {
         }
         client {
             client()
+            logLevel = org.slf4j.event.Level.DEBUG
         }
         data {
             data()

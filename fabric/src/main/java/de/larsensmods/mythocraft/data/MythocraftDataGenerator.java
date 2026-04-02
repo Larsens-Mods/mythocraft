@@ -18,5 +18,6 @@ public class MythocraftDataGenerator implements DataGeneratorEntrypoint {
 
         pack.addProvider(MythocraftBiomeTagProvider::new);
         pack.addProvider(MythocraftBlockTagProvider::new);
+        pack.addProvider(MythocraftStructureTagProvider::new);
     }
 }

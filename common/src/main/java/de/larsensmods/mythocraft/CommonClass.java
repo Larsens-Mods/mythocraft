@@ -2,16 +2,19 @@ package de.larsensmods.mythocraft;
 
 import de.larsensmods.lmcc.api.entity.AttributeRegistry;
 import de.larsensmods.lmcc.api.entity.SpawnPlacementsRegistry;
+import de.larsensmods.mythocraft.block.MythBlocks;
 import de.larsensmods.mythocraft.entity.MythEntities;
 import de.larsensmods.mythocraft.entity.friendly.BlacksmithCyclopsEntity;
 import de.larsensmods.mythocraft.entity.friendly.PegasusEntity;
 import de.larsensmods.mythocraft.entity.friendly.SatyrEntity;
 import de.larsensmods.mythocraft.entity.monster.CyclopsEntity;
+import de.larsensmods.mythocraft.entity.monster.MinotaurEntity;
 import de.larsensmods.mythocraft.entity.monster.NemeanLionEntity;
 import de.larsensmods.mythocraft.item.MythArmorMaterials;
 import de.larsensmods.mythocraft.item.MythCreativeTabs;
 import de.larsensmods.mythocraft.item.MythItems;
 import de.larsensmods.mythocraft.platform.Services;
+import de.larsensmods.mythocraft.world.level.MythChunkGenerators;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.monster.Monster;
@@ -34,8 +37,10 @@ public class CommonClass {
 
         MythEntities.registerEntityTypes();
         MythArmorMaterials.registerArmorMaterials();
+        MythBlocks.registerBlocks();
         MythItems.registerItems();
         MythCreativeTabs.registerCreativeTabs();
+        MythChunkGenerators.registerChunkGenerators();
 
         createEntityAttributes();
         registerSpawnPlacements();
@@ -47,6 +52,7 @@ public class CommonClass {
         AttributeRegistry.register(MythEntities.NEMEAN_LION, () -> NemeanLionEntity.createAttributes().build());
         AttributeRegistry.register(MythEntities.CYCLOPS, () -> CyclopsEntity.createAttributes().build());
         AttributeRegistry.register(MythEntities.BLACKSMITH_CYCLOPS, () -> BlacksmithCyclopsEntity.createAttributes().build());
+        AttributeRegistry.register(MythEntities.MINOTAUR, () -> MinotaurEntity.createAttributes().build());
     }
 
     private static void registerSpawnPlacements(){
@@ -55,5 +61,6 @@ public class CommonClass {
         SpawnPlacementsRegistry.register(MythEntities.NEMEAN_LION, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NemeanLionEntity::checkAnyLightMonsterSpawnRules);
         SpawnPlacementsRegistry.register(MythEntities.CYCLOPS, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CyclopsEntity::checkAnyLightMonsterSpawnRules);
         SpawnPlacementsRegistry.register(MythEntities.BLACKSMITH_CYCLOPS, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlacksmithCyclopsEntity::checkMobSpawnRules);
+        SpawnPlacementsRegistry.register(MythEntities.MINOTAUR, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MinotaurEntity::checkAnyLightMonsterSpawnRules);
     }
 }

@@ -10,8 +10,11 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -75,7 +78,8 @@ public abstract class MixinHumanoidArmorLayer<T extends LivingEntity, M extends 
 
                 ArmorTrim armortrim = itemstack.get(DataComponents.TRIM);
                 if (armortrim != null) {
-                    instance.renderTrim(armoritem.getMaterial(), p_117119_, p_117120_, p_117123_, armortrim, model, flag);
+                    //instance.renderTrim(armoritem.getMaterial(), p_117119_, p_117120_, p_117123_, armortrim, model, flag);
+                    mythocraft$renderTrimFix(instance, armoritem.getMaterial(), p_117119_, p_117120_, p_117123_, armortrim, model, flag);
                 }
 
                 if (itemstack.hasFoil()) {
@@ -84,6 +88,13 @@ public abstract class MixinHumanoidArmorLayer<T extends LivingEntity, M extends 
             }
         }
         ci.cancel();
+    }
+
+    @Unique
+    private void mythocraft$renderTrimFix(HumanoidArmorLayer<T, M, A> instance, Holder<ArmorMaterial> armorMaterial, PoseStack poseStack, MultiBufferSource bufferSource, int i, ArmorTrim armorTrim, A model, boolean flag){
+        TextureAtlasSprite textureatlassprite = instance.armorTrimAtlas.getSprite(flag ? armorTrim.innerTexture(armorMaterial) : armorTrim.outerTexture(armorMaterial));
+        VertexConsumer vertexconsumer = textureatlassprite.wrap(bufferSource.getBuffer(Sheets.armorTrimsSheet(armorTrim.pattern().value().decal())));
+        model.renderToBuffer(poseStack, vertexconsumer, i, OverlayTexture.NO_OVERLAY);
     }
 
     @Unique

@@ -44,6 +44,22 @@ public class MythStructureTemplatePools {
                 ),
                 StructureTemplatePool.Projection.RIGID
         ));
+
+        //LABYRINTH PORTALS
+        structureTemplatePoolBootstrapContext.register(MythocraftStructureTemplatePools.LABYRINTH_PORTAL, new StructureTemplatePool(
+                structureTemplatePoolHolderGetter.getOrThrow(Pools.EMPTY),
+                List.of(
+                        Pair.of(StructurePoolElement.single("mythocraft:labyrinth_portal_stonebricks"), 1)
+                ),
+                StructureTemplatePool.Projection.RIGID
+        ));
+        structureTemplatePoolBootstrapContext.register(MythocraftStructureTemplatePools.LABYRINTH_PORTAL_SANDSTONE, new StructureTemplatePool(
+                structureTemplatePoolHolderGetter.getOrThrow(Pools.EMPTY),
+                List.of(
+                        Pair.of(StructurePoolElement.single("mythocraft:labyrinth_portal_sandstone"), 1)
+                ),
+                StructureTemplatePool.Projection.RIGID
+        ));
     }
 
 }

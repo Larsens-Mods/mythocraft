@@ -11,5 +11,6 @@ public class MythocraftStructures {
     public static ResourceKey<Structure> GREEK_TEMPLE = ResourceKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "greek_temple"));
     public static ResourceKey<Structure> CYCLOPS_CAVE = ResourceKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "cyclops_cave"));
     public static ResourceKey<Structure> CYCLOPS_FORGE = ResourceKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "cyclops_forge"));
-
+    public static ResourceKey<Structure> LABYRINTH_PORTAL = ResourceKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth_portal_stonebricks"));
+    public static ResourceKey<Structure> LABYRINTH_PORTAL_SANDSTONE = ResourceKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "labyrinth_portal_sandstone"));
 }

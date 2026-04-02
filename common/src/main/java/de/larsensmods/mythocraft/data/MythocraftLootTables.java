@@ -14,5 +14,6 @@ public class MythocraftLootTables {
     public static ResourceKey<LootTable> PEGASUS_LOOT = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "entities/pegasus"));
     public static ResourceKey<LootTable> CYCLOPS_LOOT = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "entities/cyclops"));
     public static ResourceKey<LootTable> BLACKSMITH_CYCLOPS_LOOT = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "entities/blacksmith_cyclops"));
+    public static ResourceKey<LootTable> MINOTAUR_LOOT = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "entities/minotaur"));
 
 }

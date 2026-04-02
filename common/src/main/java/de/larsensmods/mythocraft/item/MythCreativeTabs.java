@@ -22,13 +22,17 @@ public class MythCreativeTabs {
                 .displayItems((params, output) -> {
                     output.accept(MythItems.AMBROSIA.get());
                     output.accept(MythItems.NEMEAN_LION_PELT.get());
+                    output.accept(MythItems.MINOTAUR_HORN.get());
 
                     output.accept(MythItems.NEMEAN_COAT.get());
                     output.accept(MythItems.HADES_HELM.get());
 
+                    output.accept(MythItems.LABYRINTH_BARRIER_ROCK.get());
+
                     output.accept(MythItems.SATYR_SPAWN_EGG.get());
                     output.accept(MythItems.PEGASUS_SPAWN_EGG.get());
                     output.accept(MythItems.NEMEAN_LION_SPAWN_EGG.get());
+                    output.accept(MythItems.MINOTAUR_SPAWN_EGG.get());
                     output.accept(MythItems.CYCLOPS_SPAWN_EGG.get());
                     output.accept(MythItems.BLACKSMITH_CYCLOPS_SPAWN_EGG.get());
                 })
