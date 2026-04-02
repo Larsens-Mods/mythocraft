@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.larsensmods.mythocraft.Constants;
 import de.larsensmods.mythocraft.data.MythLevels;
 import de.larsensmods.mythocraft.data.MythocraftStructures;
+import de.larsensmods.mythocraft.mixin.accessor.StructureTemplateAccessor;
 import de.larsensmods.mythocraft.world.level.data.LevelBossSpawnData;
 import de.larsensmods.mythocraft.world.level.util.LabyrinthUtilFunctions;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
@@ -155,7 +156,7 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
             if(structure != null){
                 int baseY = chunk.getMinBuildHeight() + BASE_FLOOR_THICKNESS;
                 Set<Block> set = new HashSet<>();
-                for(StructureTemplate.StructureBlockInfo blockInfo : structure.palettes.getFirst().blocks()){
+                for(StructureTemplate.StructureBlockInfo blockInfo : ((StructureTemplateAccessor) structure).mythocraft$getPalettes().getFirst().blocks()){
                     set.add(blockInfo.state().getBlock());
                 }
                 Rotation rotation = LabyrinthUtilFunctions.calcRequiredRotation(tileShape, tileType);
@@ -175,7 +176,7 @@ public class LabyrinthChunkGenerator extends ChunkGenerator {
                     Constants.LOG.warn("Could not spawn entities, labyrinthServerLevel is null!");
                     return;
                 }
-                for(StructureTemplate.StructureEntityInfo entityInfo : structure.entityInfoList){
+                for(StructureTemplate.StructureEntityInfo entityInfo : ((StructureTemplateAccessor) structure).mythocraft$getEntityInfoList()){
                     Vec3 spawnPos = entityInfo.pos;
                     switch(rotation){
                         case CLOCKWISE_90 -> spawnPos = new Vec3(16 - spawnPos.z, spawnPos.y, spawnPos.x);
