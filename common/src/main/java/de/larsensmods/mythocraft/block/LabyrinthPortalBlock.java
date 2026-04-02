@@ -121,12 +121,12 @@ public class LabyrinthPortalBlock extends Block implements Portal {
             Set<BlockPos> labyrinthPortalPositions = new HashSet<>();
             BlockPos minPos, maxPos;
             if (isDestinationLabyrinth) {
-                minPos = new BlockPos(chunkAccess.getPos().getMinBlockX(), inLevel.getMinBuildHeight(), chunkAccess.getPos().getMinBlockZ());
-                maxPos = new BlockPos(chunkAccess.getPos().getMaxBlockX(), inLevel.getMaxBuildHeight(), chunkAccess.getPos().getMaxBlockZ());
+                minPos = new BlockPos(chunkAccess.getPos().getMinBlockX() - 16, inLevel.getMinBuildHeight(), chunkAccess.getPos().getMinBlockZ() - 16);
+                maxPos = new BlockPos(chunkAccess.getPos().getMaxBlockX() + 16, inLevel.getMaxBuildHeight(), chunkAccess.getPos().getMaxBlockZ() + 16);
             } else {
                 ChunkPos entryChunkPos = inLevel.getChunk(entryPortalPos).getPos();
-                minPos = new BlockPos((int) (entryChunkPos.getMinBlockX() * teleportScale), inLevel.getMinBuildHeight(), (int) (entryChunkPos.getMinBlockZ() * teleportScale));
-                maxPos = new BlockPos((int) (entryChunkPos.getMaxBlockX() * teleportScale), inLevel.getMaxBuildHeight(), (int) (entryChunkPos.getMaxBlockZ() * teleportScale));
+                minPos = new BlockPos((int) (entryChunkPos.getMinBlockX() * teleportScale) - 16, inLevel.getMinBuildHeight(), (int) (entryChunkPos.getMinBlockZ() * teleportScale) - 16);
+                maxPos = new BlockPos((int) (entryChunkPos.getMaxBlockX() * teleportScale) + 16, inLevel.getMaxBuildHeight(), (int) (entryChunkPos.getMaxBlockZ() * teleportScale) + 16);
             }
             for(BlockPos pos : BlockPos.betweenClosed(minPos, maxPos)) {
                 if(inLevel.getBlockState(pos).is(MythBlocks.LABYRINTH_BARRIER_ROCK.get())) {
@@ -157,7 +157,7 @@ public class LabyrinthPortalBlock extends Block implements Portal {
                     }
                 }
                 if(exitPortalBasePos == null){
-                    Constants.LOG.warn("Could not find any portals or barrier rocks in correct portal shape in area!");
+                    Constants.LOG.warn("Could not find any portals or barrier rocks in correct portal shape for portal {} between {} and {}!", entryPortalPos, minPos, maxPos);
                     return null;
                 }
             }
